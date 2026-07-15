@@ -1,0 +1,78 @@
+# 모든 텍스트 파일: 저장소에는 LF로 저장, 체크아웃도 LF로 통일 (Windows/Mac 혼용 대비)
+* text=auto eol=lf
+
+# 소스 코드
+*.cs text diff=csharp
+*.cginc text
+*.shader text
+*.hlsl text
+*.compute text
+*.json text
+*.xml text
+*.yaml text
+*.yml text
+*.md text
+*.txt text
+*.asmdef text
+*.asmref text
+*.rsp text
+
+# Unity YAML 직렬화 파일 (Unity는 항상 LF로 씀)
+*.meta text
+*.unity text
+*.prefab text
+*.asset text
+*.mat text
+*.anim text
+*.controller text
+*.overrideController text
+*.physicMaterial text
+*.physicsMaterial2D text
+*.playable text
+*.mask text
+*.brush text
+*.flare text
+*.fontsettings text
+*.guiskin text
+*.giparams text
+*.renderTexture text
+*.spriteatlas text
+*.terrainlayer text
+*.mixer text
+*.shadervariants text
+*.preset text
+*.signal text
+
+# 바이너리 (줄바꿈 변환 절대 금지)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.tga binary
+*.tif binary
+*.tiff binary
+*.psd binary
+*.exr binary
+*.hdr binary
+*.fbx binary
+*.obj binary
+*.blend binary
+*.dae binary
+*.3ds binary
+*.mp3 binary
+*.wav binary
+*.ogg binary
+*.aif binary
+*.mp4 binary
+*.mov binary
+*.ttf binary
+*.otf binary
+*.dll binary
+*.so binary
+*.dylib binary
+*.a binary
+*.exe binary
+*.unitypackage binary
+*.bank binary
+*.cubemap binary
+*.zip binary
