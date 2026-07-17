@@ -114,3 +114,10 @@ InitTestScene*.unity*
 # Windows
 Thumbs.db
 Desktop.ini
+
+# 개인 기록용
+/Docs/Recordings/
+/Docs/player-design.md
+
+# IDE 개인 설정
+/.idea/
