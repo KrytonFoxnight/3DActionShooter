@@ -42,6 +42,7 @@
 - `Tools/claude-skills/` 견본 처리: **회사 내부 정보 포함(프로젝트 ID, DB 스키마, 사례 코드) — 이 repo에 커밋되지 않게 확정할 것.** 현재 git 추적 여부부터 확인. 추적 안 되고 있으면 `.gitignore`에 명시 추가, 추적 중이면 제거.
 - 이 프로젝트가 소비자가 되는 설정(매니페스트 등)은 marketplace repo가 생긴 뒤에.
 - 기존 `.claude/skills/guide/`(라인 단위 가이드 스킬)는 이 프로젝트 전용이므로 그대로 둠. 범용화하고 싶으면 marketplace로 이관은 선택.
+  - **(2026-07-19 결정 변경)** 사용자 확정: 프로젝트 전용 여부와 무관하게 **모든 자작 스킬의 정본은 중앙 repo**. guide는 marketplace의 `guide` 플러그인 1.0.0으로 이관 완료, 이 repo는 `skills-manifest.json`으로 소비.
 
 ## 4. deploy.py 설계 (합의된 청사진)
 
