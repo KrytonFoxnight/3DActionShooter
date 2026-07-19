@@ -3,11 +3,11 @@
     "claude-code": {
       "guide": {
         "version": "1.0.0",
-        "hash": "sha256:6daf0c17e1d2c1dc8eb63712d2af7d4b75431fc48596c05b69a7c37ffffe9fdf",
+        "hash": "sha256:85060154839d51f5f9533b2d202ae2308e764a44a31ace9eb71551018a53e252",
         "skills": [
           "guide"
         ],
-        "installed_at": "2026-07-19T08:40:58+00:00"
+        "installed_at": "2026-07-19T08:41:49+00:00"
       },
       "skill-manage": {
         "version": "1.2.0",
