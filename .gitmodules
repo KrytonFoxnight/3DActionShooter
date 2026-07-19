@@ -1,0 +1,3 @@
+[submodule "Assets/ThirdParty"]
+	path = Assets/ThirdParty
+	url = https://github.com/KrytonFoxnight/3DActionShooter-Assets.git
