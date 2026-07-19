@@ -24,6 +24,13 @@
           "agent-doc",
           "agent-doc-bootstrap"
         ]
+      },
+      "post-issue": {
+        "version": "1.0.0",
+        "hash": "sha256:cba8b45e99acf148d8f2ca69e78df8db8f0e239d7a2fb0823530974cdedb6c0b",
+        "skills": [
+          "post-issue"
+        ]
       }
     }
   }
