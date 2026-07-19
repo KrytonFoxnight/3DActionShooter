@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "claude-code": {
+      "guide": {
+        "version": "1.0.0",
+        "hash": "sha256:85060154839d51f5f9533b2d202ae2308e764a44a31ace9eb71551018a53e252",
+        "skills": [
+          "guide"
+        ],
+        "installed_at": "2026-07-19T08:01:13+00:00"
+      }
+    }
+  }
+}
