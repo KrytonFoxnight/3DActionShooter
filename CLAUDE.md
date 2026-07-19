@@ -143,6 +143,15 @@ main ← dev ← feature/*
 - 범위 확장 제안이 나오면 위 판단 기준으로 반대 의견을 낸다.
 - 기획이 흔들리면 원칙으로 돌아간다: 퍼스트 디센던트-lite 루프, 3D TPS 무기 액션, 싱글 3~5분 데모.
 
+## AgentDoc 규칙
+
+`[AgentDoc]`은 코드의 목적·수정 시 주의사항을 사람이 남기고 AI가 읽는 어트리뷰트다 (`Assets/Scripts/Core/AgentDocModule/AgentDocAttribute.cs`). 조회는 `agent-doc` 스킬로 한다.
+
+- **`[AgentDoc]`은 사람만 수동 작성한다. AI는 추가·수정·삭제 금지.** 유일한 예외: 사용자가 직접 `/agent-doc-bootstrap`을 호출한 경우 AI의 **신규 추가만** 허용 (기존 수정·삭제는 그때도 금지).
+- 코드 수정 전 대상 영역에 `warning`이 있으면 반드시 읽는다.
+- **Scripting Define Symbols에 `AGENT_DOC`을 추가하지 않는다** — 어트리뷰트 문자열이 출시 바이너리에 유출된다. 미정의가 정상 상태이며 스캐너는 심볼과 무관하게 소스 텍스트를 읽는다.
+- `.llm-index/`는 스캔 산출물이다 (gitignore 대상). 커밋하지 않고, 사용 직전 재스캔으로만 최신화한다.
+
 ## 산출물 (9월 전 필수)
 
 1. GitHub README — 프로젝트 소개, 실행 방법, 조작법, 시스템 구조, 트러블슈팅, 영상 링크
