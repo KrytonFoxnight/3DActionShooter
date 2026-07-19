@@ -33,6 +33,8 @@
 /[Aa]ssets/Plugins/Editor/JetBrains*
 # Jetbrains Rider personal-layer settings
 *.DotSettings.user
+# Jetbrains IDE 프로젝트 메타데이터
+.idea/
 
 # Visual Studio cache directory
 .vs/
