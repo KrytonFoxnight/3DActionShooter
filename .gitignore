@@ -33,6 +33,8 @@
 /[Aa]ssets/Plugins/Editor/JetBrains*
 # Jetbrains Rider personal-layer settings
 *.DotSettings.user
+# Jetbrains IDE 프로젝트 메타데이터
+.idea/
 
 # Visual Studio cache directory
 .vs/
@@ -114,3 +116,6 @@ InitTestScene*.unity*
 # Windows
 Thumbs.db
 Desktop.ini
+
+# deploy.py 설치 산출물 — 정본은 중앙 스킬 repo(skills-what-you-want), 재생성: deploy.py install
+/.claude/skills/
