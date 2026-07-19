@@ -1,0 +1,54 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review, reopened]
+
+# 같은 PR에 push가 연달아 오면 이전 리뷰 실행을 취소한다 (구독 사용량 절약)
+concurrency:
+  group: claude-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  claude-review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Claude PR Review
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          track_progress: true
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            이 저장소는 Unity/C# 포트폴리오 프로젝트다. 루트의 CLAUDE.md 프로젝트
+            지침을 먼저 읽고, 그 원칙에 비추어 PR을 리뷰하라.
+
+            리뷰 관점:
+
+            1. **정확성** — 버그, 널 참조, 경계 조건, Unity 생명주기 오용
+               (Update/FixedUpdate 혼동, 파괴된 오브젝트 접근 등)
+            2. **프로젝트 원칙 준수** — CLAUDE.md의 기능 우선순위와 "하지 말 것"
+               위반 여부, 과도한 추상화, 범위 확장(scope creep)
+            3. **네트워크 대비 설계 훅** — 입력/행동 로직 분리, 순수 C# 계산
+               레이어, 스폰 창구 단일화가 깨지지 않았는지
+            4. **성능** — 매 프레임 할당(GC), 불필요한 GetComponent/Find 호출,
+               물리 콜백 남용
+            5. **가독성/유지보수성** — 네이밍, 중복, 죽은 코드
+
+            구체적 문제는 인라인 코멘트로, 총평·칭찬은 최상위 코멘트로 남겨라.
+            사소한 스타일 지적은 최소화하고, 게임플레이 코어의 결함에 집중하라.
+            리뷰는 한국어로 작성하라.
+
+          claude_args: |
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"
