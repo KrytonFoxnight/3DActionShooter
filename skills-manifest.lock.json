@@ -8,6 +8,14 @@
           "guide"
         ],
         "installed_at": "2026-07-19T08:01:13+00:00"
+      },
+      "skill-manage": {
+        "version": "1.0.0",
+        "hash": "sha256:ce2cf6df56fd0e31e5af60a46008809c0f8208a5833832aa1d7381046ef944f3",
+        "skills": [
+          "skill-manage"
+        ],
+        "installed_at": "2026-07-19T08:15:29+00:00"
       }
     }
   }
