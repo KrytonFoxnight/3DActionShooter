@@ -16,6 +16,14 @@
           "skill-manage"
         ],
         "installed_at": "2026-07-19T09:01:49+00:00"
+      },
+      "agent-doc": {
+        "version": "1.0.0",
+        "hash": "sha256:355c85d3b18133019e92d72f1ceb5cde74431ca273dd4a829c5a9c55393266cd",
+        "skills": [
+          "agent-doc",
+          "agent-doc-bootstrap"
+        ]
       }
     }
   }
