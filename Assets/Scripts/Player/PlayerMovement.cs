@@ -27,8 +27,7 @@ namespace Player
         private static readonly int JumpTrigger = Animator.StringToHash("Jump"); // 점프 트리거
         private static readonly int IsGrounded = Animator.StringToHash("IsGrounded"); // 지면 상태 여부
 
-        // Animator에서 사용되는 클립 위치값들
-        // sprint의 경우, 다른 값으로 조정되면 여기 바꿔야 함
+        // 블렌드트리 링 좌표. 안쪽 링(1)=걷기, 바깥 링(2)=달리기
         private const float WalkAnimValue = 1f;
         private const float RunAnimValue = 2f;
 
@@ -126,12 +125,12 @@ namespace Player
         {
             // 기존에 world space 기준으로 기술된 캐릭터 움직임 벡터를 캐릭터의 local space 기준으로 변환
             var localMove = transform.InverseTransformDirection(characterMoveDir);
-            var sprintMultiplier = _isWalking ? WalkAnimValue : RunAnimValue;
+            var moveAnimValue = _isWalking ? WalkAnimValue : RunAnimValue;
 
             // 캐릭터 기준으로 변환된 이동 벡터값을 각 parameter에 업데이트
             // 바로 바뀌면 너무 이상하니까 damp time 넣어줘서 점진적 변경되도록 처리
-            _animator.SetFloat(MoveX, localMove.x * sprintMultiplier, 0.1f, Time.deltaTime);
-            _animator.SetFloat(MoveY, localMove.z * sprintMultiplier, 0.1f, Time.deltaTime);
+            _animator.SetFloat(MoveX, localMove.x * moveAnimValue, 0.1f, Time.deltaTime);
+            _animator.SetFloat(MoveY, localMove.z * moveAnimValue, 0.1f, Time.deltaTime);
             _animator.SetBool(IsGrounded, _characterController.isGrounded);
         }
 
