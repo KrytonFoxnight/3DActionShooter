@@ -42,6 +42,9 @@ namespace Cameras
         /// </summary>
         private void UpdateRig()
         {
+            if (!targetTransform) return;
+            if (!playerInputReader) return;
+
             var lookDelta = playerInputReader.LookDelta;
             _rig.Yaw += lookDelta.x * sensitivity;
 
