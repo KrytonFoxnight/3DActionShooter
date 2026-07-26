@@ -177,8 +177,8 @@ namespace Player
             {
                 _verticalVelocity = -2f; // 접지 상태 안정화 처리
 
-                // 점프 처리
-                if (_inputReader.JumpPressed)
+                // 점프 처리, 조작 잠금 중에는 점프 입력 무시
+                if (!_isControlLocked && _inputReader.JumpPressed)
                 {
                     _verticalVelocity = Mathf.Sqrt(jumpHeight * 2f * -gravity); // 제곱근 음수 방지를 위해 gravity 부호 역전 처리
                     _animator.SetTrigger(JumpTrigger);
