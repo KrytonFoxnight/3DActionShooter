@@ -271,9 +271,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cameras.CameraFollow
   targetTransform: {fileID: 1579660498}
   playerInputReader: {fileID: 1579660496}
-  distance: 2
+  distance: 3
   pivotHeight: 1.5
-  sensitivity: 0.15
+  sensitivity: 0.25
   pitchMin: -30
   pitchMax: 60
 --- !u!1 &410087039
