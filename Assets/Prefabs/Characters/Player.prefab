@@ -4074,7 +4074,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerMovement
   cameraTransform: {fileID: 0}
-  baseMoveSpeed: 5
+  runMoveSpeed: 12
+  walkMoveSpeed: 5
+  walkToggleHoldTime: 0.75
   rotationSpeed: 12
   gravity: -22
   jumpHeight: 3

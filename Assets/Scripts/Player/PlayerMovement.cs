@@ -13,7 +13,9 @@ namespace Player
         private Transform cameraTransform;
 
         // 플레이어 관련 파라미터들
-        [SerializeField] private float baseMoveSpeed = 5f; // 움직임 속도
+        [SerializeField] private float runMoveSpeed = 12f; // 달리기 속도
+        [SerializeField] private float walkMoveSpeed = 5f; // 걷기 속도
+        [SerializeField] private float walkToggleHoldTime = 0.75f; // 걷기 달리기 전환 홀드 시간
         [SerializeField] private float rotationSpeed = 12f; // 회전 속도
         [SerializeField] private float gravity = -22f; // 중력값
         [SerializeField] private float jumpHeight = 3f; // 점프 높이
@@ -27,15 +29,18 @@ namespace Player
 
         // Animator에서 사용되는 클립 위치값들
         // sprint의 경우, 다른 값으로 조정되면 여기 바꿔야 함
-        private const float SprintAnimValue = 2f;
-        private const float DefaultAnimValue = 1f;
+        private const float WalkAnimValue = 1f;
+        private const float RunAnimValue = 2f;
 
         private Animator _animator;
         private PlayerInputReader _inputReader;
         private CharacterController _characterController;
 
         private float _verticalVelocity;
-        private bool _isSprinting;
+        private bool _isWalking;
+
+        private float _walkHoldTimer;
+        private bool _walkToggleConsumed;
 
         private void Awake()
         {
@@ -46,6 +51,9 @@ namespace Player
 
         private void Update()
         {
+            // 달리기, 걷기 관련 전환 처리
+            UpdateMoveModeToggle();
+
             // 캐릭터 수직 이동 처리
             UpdatePlayerVerticalVelocity();
 
@@ -61,13 +69,30 @@ namespace Player
             UpdatePlayerAnimation(characterMoveDir);
         }
 
+        private void UpdateMoveModeToggle()
+        {
+            if (_inputReader.IsWalkKeyHeld)
+            {
+                _walkHoldTimer += Time.deltaTime;
+                if (!_walkToggleConsumed && _walkHoldTimer >= walkToggleHoldTime)
+                {
+                    _isWalking = !_isWalking;
+                    _walkToggleConsumed = true;
+                }
+            }
+            else
+            {
+                _walkHoldTimer = 0f;
+                _walkToggleConsumed = false;
+            }
+        }
+
         private void UpdatePlayerVerticalVelocity()
         {
             // 캐릭터가 바닥에 있는 경우
             if (_characterController.isGrounded)
             {
                 _verticalVelocity = -2f;                // 접지 상태 안정화 처리
-                _isSprinting = _inputReader.IsSprint;   // 캐릭터의 sprint 상태 최신화
 
                 // 점프 처리
                 if (_inputReader.JumpPressed)
@@ -101,7 +126,7 @@ namespace Player
         {
             // 기존에 world space 기준으로 기술된 캐릭터 움직임 벡터를 캐릭터의 local space 기준으로 변환
             var localMove = transform.InverseTransformDirection(characterMoveDir);
-            var sprintMultiplier = _isSprinting ? SprintAnimValue : DefaultAnimValue;
+            var sprintMultiplier = _isWalking ? WalkAnimValue : RunAnimValue;
 
             // 캐릭터 기준으로 변환된 이동 벡터값을 각 parameter에 업데이트
             // 바로 바뀌면 너무 이상하니까 damp time 넣어줘서 점진적 변경되도록 처리
@@ -111,7 +136,7 @@ namespace Player
         }
 
         // 플레이어 속력
-        private float PlayerMoveSpeed => _isSprinting ? baseMoveSpeed * 2 : baseMoveSpeed;
+        private float PlayerMoveSpeed => _isWalking ? walkMoveSpeed : runMoveSpeed;
 
         // 카메라 전방 수평 단위 벡터
         private Vector3 CameraForwardFlat => Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up).normalized;
