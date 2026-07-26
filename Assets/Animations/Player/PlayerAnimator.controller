@@ -325,8 +325,7 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 8005294758544287730}
-  m_StateMachineBehaviours:
-  - {fileID: 1250298158959314170}
+  m_StateMachineBehaviours: []
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -464,7 +463,7 @@ AnimatorStateTransition:
   serializedVersion: 3
   m_TransitionDuration: 0.14999992
   m_TransitionOffset: 0.011563835
-  m_ExitTime: 0.5
+  m_ExitTime: 0.45
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0

@@ -24,6 +24,7 @@ namespace Player
         [Header("Dash")] [SerializeField] private float dashDistance = 5f;
         [SerializeField] private float dashDuration = 0.4f;
         [SerializeField] private float dashCooldown = 0.5f;
+        [SerializeField] private float dashRecoveryTime = 0.08f;
 
         // Animator 관련 파라미터들
         private static readonly int MoveX = Animator.StringToHash("MoveX"); // 캐릭터 좌우 이동 성분
@@ -45,15 +46,19 @@ namespace Player
         private float _verticalVelocity;
         private bool _isWalking;
 
+        // 걷기 토글 관련
         private float _walkHoldTimer;
         private bool _walkToggleConsumed;
 
-        private bool _isDashing;
-        private float _dashTimer;
-        private float _dashCooldownTimer;
-        private Vector3 _dashDirection;
-        private bool _isDashLocked;
-        private float _dashLockTimeout;
+        // 대시 관련
+        private bool _isDashing;            // 현재 대시 상태
+        private float _dashTimer;           // 대시 시간 추적 타이머
+        private float _dashCooldownTimer;   // 대시 재사용 시간 추적 타이머
+        private Vector3 _dashDirection;     // 대시 방향
+
+        // 조작 잠금 관련
+        private bool _isControlLocked;      // 시점 조작을 제외한 컨트롤이 잠긴 상태 추적
+        private float _controlLockTimer;    // 잠긴 상태 추적 타이머
 
         private void Awake()
         {
@@ -64,6 +69,9 @@ namespace Player
 
         private void Update()
         {
+            // 조작 잠금 관련 처리
+            UpdateControlLockStatus();
+
             // 대시 관련 처리
             UpdateDash();
 
@@ -78,7 +86,7 @@ namespace Player
 
             var characterMoveDir = CameraRelativeMove; // 카메라 기준 움직여야 하는 방향
 
-            if (_isDashLocked)
+            if (_isDashing || _isControlLocked)
             {
                 _animator.SetBool(IsGrounded, _characterController.isGrounded);
                 return;
@@ -91,18 +99,23 @@ namespace Player
             UpdatePlayerAnimation(characterMoveDir);
         }
 
+        private void UpdateControlLockStatus()
+        {
+            // 조작이 잠긴 경우
+            if (_isControlLocked)
+            {
+                _controlLockTimer -= Time.deltaTime;
+                if (_controlLockTimer <= 0f) _isControlLocked = false;
+            }
+        }
+
+        // Dash 관련 처리
         private void UpdateDash()
         {
             // 대시 쿨다운 감산 처리
             if (_dashCooldownTimer > 0f)
             {
                 _dashCooldownTimer -= Time.deltaTime;
-            }
-
-            if (_isDashLocked)
-            {
-                _dashLockTimeout -= Time.deltaTime;
-                if (_dashLockTimeout <= 0f) _isDashLocked = false;
             }
 
             // 이미 대시 중인 경우 감산만 대시 시간 감산 처리하고 만약 대시가 끝났다면 대시 상태를 해제함
@@ -113,7 +126,7 @@ namespace Player
                 return;
             }
 
-            if (_isDashLocked) return;                                  // 대시가 잠긴 경우
+            if (_isControlLocked) return;                               // 조작이 잠긴 경우
             if (!_inputReader.DashPressed) return;                      // 이번 프레임에 대시가 없는 경우
             if (_dashCooldownTimer > 0f) return;                        // 대시 쿨다운이 남은 경우
             if (!_characterController.isGrounded) return;               // 접지 상태가 아닌 경우
@@ -126,8 +139,8 @@ namespace Player
             // 대시 상태 활성화 및 관련 변수들 초기화
             _isDashing = true;
             _dashTimer = dashDuration;
-            _isDashLocked = true;
-            _dashLockTimeout = dashDuration * 3f;
+            _isControlLocked = true;
+            _controlLockTimer = dashDuration + dashRecoveryTime;
             _dashCooldownTimer = dashCooldown;
 
             var localDash = transform.InverseTransformDirection(_dashDirection);
@@ -137,6 +150,7 @@ namespace Player
             _animator.SetTrigger(DashTrigger);
         }
 
+        // 기본 이동 토글 처리
         private void UpdateMoveModeToggle()
         {
             if (_inputReader.IsWalkKeyHeld)
@@ -155,6 +169,7 @@ namespace Player
             }
         }
 
+        // 플레이어 수직 속도 처리
         private void UpdatePlayerVerticalVelocity()
         {
             // 캐릭터가 바닥에 있는 경우
@@ -177,6 +192,7 @@ namespace Player
             }
         }
 
+        // 플레이어 회전 처리
         private void UpdatePlayerRotation(Vector3 characterMoveDir)
         {
             // 캐릭터 회전 처리
@@ -220,18 +236,20 @@ namespace Player
         private float DashSpeed => dashDistance / dashDuration;
 
         // 플레이어 최종 속도
-        private Vector3 PlayerVelocity => HorizontalVelocity + Vector3.up * _verticalVelocity;
+        private Vector3 PlayerVelocity => HorizontalVelocity + VerticalVelocity;
 
+        // 플레이어 수평 속도
         private Vector3 HorizontalVelocity
         {
             get
             {
                 if(_isDashing) return _dashDirection * DashSpeed;
-                if(_isDashLocked) return Vector3.zero;
+                if(_isControlLocked) return _dashDirection * DashSpeed * 0.3f;
                 return CameraRelativeMove * PlayerMoveSpeed;
             }
         }
 
-        public void OnDashAnimationEnd() => _isDashLocked = false;
+        // 플레이어 수직 속도
+        private Vector3 VerticalVelocity => Vector3.up * _verticalVelocity;
     }
 }
