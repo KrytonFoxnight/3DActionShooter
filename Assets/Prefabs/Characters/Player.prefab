@@ -4034,6 +4034,8 @@ GameObject:
   - component: {fileID: 1077758583369168451}
   - component: {fileID: 4415165403767109555}
   - component: {fileID: 1013046420389809324}
+  - component: {fileID: 7965625255088148218}
+  - component: {fileID: 2291464293797136917}
   - component: {fileID: 3809796566830955320}
   - component: {fileID: 1936441045532867387}
   m_Layer: 0
@@ -4081,6 +4083,10 @@ MonoBehaviour:
   gravity: -22
   jumpHeight: 3
   fallMultiplier: 2
+  dashDistance: 5
+  dashDuration: 0.4
+  dashCooldown: 0.5
+  dashRecoveryTime: 0.08
 --- !u!114 &1013046420389809324
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4093,6 +4099,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 901904da50ff4e53ace0d8701ae32d7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerInputReader
+--- !u!114 &7965625255088148218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424602591147918604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1aca299bd5144b58974e402529a94c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerMeleeAttack
+  attackDistance: 1.5
+  attackRadius: 1
+  attackHeight: 1
+  attackDamage: 10
+  attackInterval: 0.5
+--- !u!114 &2291464293797136917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424602591147918604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1a1d441b18346269ba2d287ea8c51c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerHealth
+  maxHp: 100
 --- !u!95 &3809796566830955320
 Animator:
   serializedVersion: 7

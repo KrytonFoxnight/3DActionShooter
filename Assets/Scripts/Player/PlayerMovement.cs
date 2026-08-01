@@ -219,6 +219,9 @@ namespace Player
             _animator.SetBool(IsGrounded, _characterController.isGrounded);
         }
 
+        // 플레이어 조작 잠금
+        public bool IsControlLocked => _isControlLocked;
+
         // 플레이어 속력
         private float PlayerMoveSpeed => _isWalking ? walkMoveSpeed : runMoveSpeed;
 
