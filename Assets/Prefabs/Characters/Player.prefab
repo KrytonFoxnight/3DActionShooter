@@ -4114,11 +4114,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerMeleeAttack
   animationHandler: {fileID: 8863919125240462317}
-  attackDistance: 1.5
-  attackRadius: 1
-  attackHeight: 1
-  attackDamage: 10
-  attackInterval: 0.5
+  attackConfig: {fileID: 11400000, guid: afeb7abf6df7b4ddcad3a34f08bab5fd, type: 2}
 --- !u!114 &2291464293797136917
 MonoBehaviour:
   m_ObjectHideFlags: 0

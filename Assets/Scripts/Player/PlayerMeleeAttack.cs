@@ -1,3 +1,4 @@
+using System.Collections;
 using Combat;
 using Player.Animation;
 using UnityEngine;
@@ -10,11 +11,8 @@ namespace Player
 
         [Header("Animation Handler"), SerializeField] private PlayerAnimationHandler animationHandler;
 
-        [SerializeField] private float attackDistance = 1.5f;
-        [SerializeField] private float attackRadius = 1f;
-        [SerializeField] private float attackHeight = 1f;
-        [SerializeField] private int attackDamage = 10;
-        [SerializeField] private float attackInterval = 0.5f;
+        [Header("Config"), SerializeField] private AttackConfig attackConfig;
+
 
         private readonly Collider[] _hitBuffer = new Collider[MaxHitTargets];
 
@@ -43,31 +41,38 @@ namespace Player
                 return;
             }
 
-            _cooldownTimer = attackInterval;
+            _cooldownTimer = attackConfig.AttackInterval;
             animationHandler.SetTrigger(PlayerAnimationStatus.Attack);
+            StartCoroutine(PerformAttackAfterDelay());
+        }
+
+        private IEnumerator PerformAttackAfterDelay()
+        {
+            yield return new WaitForSeconds(attackConfig.HitDelay);
             PerformAttack();
         }
 
         private void PerformAttack()
         {
-            var hitCount = Physics.OverlapSphereNonAlloc(HitboxCenter, attackRadius, _hitBuffer);
+            var hitCount = Physics.OverlapSphereNonAlloc(HitboxCenter, attackConfig.AttackRadius, _hitBuffer);
             for (var i = 0; i < hitCount; i++)
             {
                 var hit = _hitBuffer[i];
                 if (hit.gameObject == gameObject) continue;
                 if (!hit.TryGetComponent<IDamageable>(out var damageable)) continue;
 
-                damageable.TakeDamage(attackDamage);
+                damageable.TakeDamage(attackConfig.Damage);
             }
         }
 
         private Vector3 HitboxCenter =>
-            transform.position + transform.forward * attackDistance + Vector3.up * attackHeight;
+            transform.position + transform.forward * attackConfig.AttackDistance + Vector3.up * attackConfig.AttackHeight;
 
         private void OnDrawGizmosSelected()
         {
+            if (attackConfig == null) return;
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(HitboxCenter, attackRadius);
+            Gizmos.DrawWireSphere(HitboxCenter, attackConfig.AttackRadius);
         }
     }
 }

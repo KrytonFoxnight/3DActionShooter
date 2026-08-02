@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace TrainingDummy.AI
 {
-    [RequireComponent(typeof(TrainingDummyMeleeAttacker))]
+    [RequireComponent(typeof(TrainingDummyMeleeAttack))]
     public class TrainingDummyAI : MonoBehaviour
     {
         [SerializeField] private Transform target;
@@ -11,11 +11,11 @@ namespace TrainingDummy.AI
         [SerializeField] private bool doAttack              = true;
         [SerializeField] private bool showAttackRange       = false;
 
-        private TrainingDummyMeleeAttacker _attacker;
+        private TrainingDummyMeleeAttack _attack;
 
         private void Awake()
         {
-            _attacker = GetComponent<TrainingDummyMeleeAttacker>();
+            _attack = GetComponent<TrainingDummyMeleeAttack>();
         }
 
         private void Update()
@@ -26,7 +26,7 @@ namespace TrainingDummy.AI
             var sqrDist = (target.position - transform.position).sqrMagnitude;
             if(sqrDist > attackRange * attackRange) return;
 
-            _attacker.TryAttack(target);
+            _attack.TryAttack(target);
         }
 
         private void OnDrawGizmos()

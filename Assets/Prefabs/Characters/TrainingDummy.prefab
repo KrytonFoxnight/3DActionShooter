@@ -4102,8 +4102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrainingDummy.TrainingDummyMeleeAttacker
   animationHandler: {fileID: 2589039352215300361}
-  attackDamage: 5
-  attackInterval: 1.5
+  attackConfig: {fileID: 11400000, guid: 20c5d9137ece1422fad2052222c4d18d, type: 2}
 --- !u!114 &2514422709108955036
 MonoBehaviour:
   m_ObjectHideFlags: 0
