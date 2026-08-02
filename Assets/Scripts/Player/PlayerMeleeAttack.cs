@@ -1,4 +1,5 @@
 using Combat;
+using Player.Animation;
 using UnityEngine;
 
 namespace Player
@@ -6,6 +7,8 @@ namespace Player
     public class PlayerMeleeAttack : MonoBehaviour
     {
         private const int MaxHitTargets = 8;
+
+        [Header("Animation Handler"), SerializeField] private PlayerAnimationHandler animationHandler;
 
         [SerializeField] private float attackDistance = 1.5f;
         [SerializeField] private float attackRadius = 1f;
@@ -15,18 +18,14 @@ namespace Player
 
         private readonly Collider[] _hitBuffer = new Collider[MaxHitTargets];
 
-        private static readonly int Attack = Animator.StringToHash("Attack");
-
         private PlayerInputReader _inputReader;
         private PlayerMovement _movement;
-        private Animator _animator;
         private float _cooldownTimer;
 
         private void Awake()
         {
             _inputReader = GetComponent<PlayerInputReader>();
             _movement = GetComponent<PlayerMovement>();
-            _animator = GetComponent<Animator>();
         }
 
         private void Update()
@@ -45,7 +44,7 @@ namespace Player
             }
 
             _cooldownTimer = attackInterval;
-            _animator.SetTrigger(Attack);
+            animationHandler.SetTrigger(PlayerAnimationStatus.Attack);
             PerformAttack();
         }
 

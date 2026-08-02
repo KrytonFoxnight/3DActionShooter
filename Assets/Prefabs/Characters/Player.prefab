@@ -4036,6 +4036,7 @@ GameObject:
   - component: {fileID: 1013046420389809324}
   - component: {fileID: 7965625255088148218}
   - component: {fileID: 2291464293797136917}
+  - component: {fileID: 8863919125240462317}
   - component: {fileID: 3809796566830955320}
   - component: {fileID: 1936441045532867387}
   m_Layer: 0
@@ -4076,6 +4077,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerMovement
   cameraTransform: {fileID: 0}
+  animationHandler: {fileID: 8863919125240462317}
   runMoveSpeed: 12
   walkMoveSpeed: 5
   walkToggleHoldTime: 0.75
@@ -4111,6 +4113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1aca299bd5144b58974e402529a94c1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerMeleeAttack
+  animationHandler: {fileID: 8863919125240462317}
   attackDistance: 1.5
   attackRadius: 1
   attackHeight: 1
@@ -4128,7 +4131,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a1d441b18346269ba2d287ea8c51c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerHealth
+  animationHandler: {fileID: 8863919125240462317}
   maxHp: 100
+--- !u!114 &8863919125240462317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424602591147918604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c48a7ebb7e3f4df282937ad5af36ede9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.Animation.PlayerAnimationHandler
+  animator: {fileID: 3809796566830955320}
 --- !u!95 &3809796566830955320
 Animator:
   serializedVersion: 7
