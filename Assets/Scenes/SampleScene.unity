@@ -451,6 +451,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2514422709108955036, guid: 5c6c3ca20d97c4d5ea719b203f14e86c, type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 1579660498}
     - target: {fileID: 6424602591147918604, guid: 5c6c3ca20d97c4d5ea719b203f14e86c, type: 3}
       propertyPath: m_Name
       value: TrainingDummy
@@ -466,7 +470,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6424602591147918604, guid: 5c6c3ca20d97c4d5ea719b203f14e86c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1397118679}
   m_SourcePrefab: {fileID: 100100000, guid: 5c6c3ca20d97c4d5ea719b203f14e86c, type: 3}
 --- !u!1 &832575517
 GameObject:
@@ -517,6 +524,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1397118672 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6424602591147918604, guid: 5c6c3ca20d97c4d5ea719b203f14e86c, type: 3}
+  m_PrefabInstance: {fileID: 740800156}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1397118679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1397118672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6080f1d7116448b7b63668242e270eb4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TrainingDummy.Animation.TrainingDummyAnimationHandler
+  animator: {fileID: 0}
 --- !u!1001 &1553952535
 PrefabInstance:
   m_ObjectHideFlags: 0
