@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TrainingDummyConfig
   m_EditorClassIdentifier: Assembly-CSharp::Combat.AttackConfig
   damage: 10
-  attackInterval: 0.5
+  attackInterval: 1.4
   hitDelay: 0.3
   attackDistance: 1.5
   attackRadius: 1
