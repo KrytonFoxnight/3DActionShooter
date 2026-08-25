@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Player
 {
+    [RequireComponent(typeof(PlayerHealth))]
     public class PlayerMeleeAttack : MonoBehaviour
     {
         private const int MaxHitTargets = 8;
@@ -18,13 +19,19 @@ namespace Player
 
         private PlayerInputReader _inputReader;
         private PlayerMovement _movement;
+        private PlayerHealth _health;
+        private Coroutine _pendingHit;
         private float _cooldownTimer;
 
         private void Awake()
         {
             _inputReader = GetComponent<PlayerInputReader>();
             _movement = GetComponent<PlayerMovement>();
+            _health = GetComponent<PlayerHealth>();
         }
+
+        private void OnEnable() => _health.Damaged += CancelPendingHit;
+        private void OnDisable() => _health.Damaged -= CancelPendingHit;
 
         private void Update()
         {
@@ -34,7 +41,7 @@ namespace Player
                 return;
             }
 
-            if (_movement.IsControlLocked) return;
+            if (_movement.IsControlLocked || _health.IsInHitStun) return;
 
             if (!_inputReader.AttackPressed)
             {
@@ -43,12 +50,22 @@ namespace Player
 
             _cooldownTimer = attackConfig.AttackInterval;
             animationHandler.SetTrigger(PlayerAnimationStatus.Attack);
-            StartCoroutine(PerformAttackAfterDelay());
+            _pendingHit = StartCoroutine(PerformAttackAfterDelay());
+        }
+
+        private void CancelPendingHit()
+        {
+            if (!attackConfig.InterruptibleByHit) return;
+            if (_pendingHit == null) return;
+
+            StopCoroutine(_pendingHit);
+            _pendingHit = null;
         }
 
         private IEnumerator PerformAttackAfterDelay()
         {
             yield return new WaitForSeconds(attackConfig.HitDelay);
+            _pendingHit = null;
             PerformAttack();
         }
 

@@ -18,6 +18,9 @@ namespace Combat
         [Header("Range Recheck")]
         [SerializeField] private float hitRange             = 2.5f;
 
+        [Header("Interrupt")]
+        [SerializeField] private bool interruptibleByHit    = true;
+
         public int Damage => damage;
         public float AttackInterval => attackInterval;
         public float HitDelay => hitDelay;
@@ -25,5 +28,6 @@ namespace Combat
         public float AttackRadius => attackRadius;
         public float AttackHeight => attackHeight;
         public float HitRange => hitRange;
+        public bool InterruptibleByHit => interruptibleByHit;
     }
 }
