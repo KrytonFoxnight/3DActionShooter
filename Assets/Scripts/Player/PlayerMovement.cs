@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+﻿using Player.Animation;
+using UnityEngine;
 
 namespace Player
 {
     [RequireComponent(
-        typeof(Animator),
         typeof(PlayerInputReader),
         typeof(CharacterController)
     )]
@@ -11,6 +11,8 @@ namespace Player
     {
         [Header("Components")] [SerializeField]
         private Transform cameraTransform;
+
+        [SerializeField] private PlayerAnimationHandler animationHandler;
 
         // 플레이어 관련 파라미터들
         [SerializeField] private float runMoveSpeed = 12f; // 달리기 속도
@@ -26,20 +28,10 @@ namespace Player
         [SerializeField] private float dashCooldown = 0.5f;
         [SerializeField] private float dashRecoveryTime = 0.08f;
 
-        // Animator 관련 파라미터들
-        private static readonly int MoveX = Animator.StringToHash("MoveX"); // 캐릭터 좌우 이동 성분
-        private static readonly int MoveY = Animator.StringToHash("MoveY"); // 캐릭터 전후 이동 성분
-        private static readonly int JumpTrigger = Animator.StringToHash("Jump"); // 점프 트리거
-        private static readonly int IsGrounded = Animator.StringToHash("IsGrounded"); // 지면 상태 여부
-        private static readonly int DashTrigger = Animator.StringToHash("Dash");
-        private static readonly int DashX = Animator.StringToHash("DashX");
-        private static readonly int DashY = Animator.StringToHash("DashY");
-
         // 블렌드트리 링 좌표. 안쪽 링(1)=걷기, 바깥 링(2)=달리기
         private const float WalkAnimValue = 1f;
         private const float RunAnimValue = 2f;
 
-        private Animator _animator;
         private PlayerInputReader _inputReader;
         private CharacterController _characterController;
 
@@ -62,7 +54,6 @@ namespace Player
 
         private void Awake()
         {
-            _animator = GetComponent<Animator>();
             _inputReader = GetComponent<PlayerInputReader>();
             _characterController = GetComponent<CharacterController>();
         }
@@ -88,7 +79,7 @@ namespace Player
 
             if (_isDashing || _isControlLocked)
             {
-                _animator.SetBool(IsGrounded, _characterController.isGrounded);
+                animationHandler.SetBool(PlayerAnimationStatus.IsGrounded, _characterController.isGrounded);
                 return;
             }
 
@@ -145,9 +136,9 @@ namespace Player
 
             var localDash = transform.InverseTransformDirection(_dashDirection);
 
-            _animator.SetFloat(DashX, localDash.x);
-            _animator.SetFloat(DashY, localDash.z);
-            _animator.SetTrigger(DashTrigger);
+            animationHandler.SetFloat(PlayerAnimationStatus.DashX, localDash.x);
+            animationHandler.SetFloat(PlayerAnimationStatus.DashY, localDash.z);
+            animationHandler.SetTrigger(PlayerAnimationStatus.Dash);
         }
 
         // 기본 이동 토글 처리
@@ -181,7 +172,7 @@ namespace Player
                 if (!_isControlLocked && _inputReader.JumpPressed)
                 {
                     _verticalVelocity = Mathf.Sqrt(jumpHeight * 2f * -gravity); // 제곱근 음수 방지를 위해 gravity 부호 역전 처리
-                    _animator.SetTrigger(JumpTrigger);
+                    animationHandler.SetTrigger(PlayerAnimationStatus.Jump);
                 }
             }
             // 공중에 있는 경우, 낙하 스케일 처리
@@ -214,10 +205,13 @@ namespace Player
 
             // 캐릭터 기준으로 변환된 이동 벡터값을 각 parameter에 업데이트
             // 바로 바뀌면 너무 이상하니까 damp time 넣어줘서 점진적 변경되도록 처리
-            _animator.SetFloat(MoveX, localMove.x * moveAnimValue, 0.1f, Time.deltaTime);
-            _animator.SetFloat(MoveY, localMove.z * moveAnimValue, 0.1f, Time.deltaTime);
-            _animator.SetBool(IsGrounded, _characterController.isGrounded);
+            animationHandler.SetFloat(PlayerAnimationStatus.MoveX, localMove.x * moveAnimValue, 0.1f, Time.deltaTime);
+            animationHandler.SetFloat(PlayerAnimationStatus.MoveY, localMove.z * moveAnimValue, 0.1f, Time.deltaTime);
+            animationHandler.SetBool(PlayerAnimationStatus.IsGrounded, _characterController.isGrounded);
         }
+
+        // 플레이어 조작 잠금
+        public bool IsControlLocked => _isControlLocked;
 
         // 플레이어 속력
         private float PlayerMoveSpeed => _isWalking ? walkMoveSpeed : runMoveSpeed;

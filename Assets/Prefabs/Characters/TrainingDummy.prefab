@@ -4032,15 +4032,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1077758583369168451}
-  - component: {fileID: 4415165403767109555}
-  - component: {fileID: 1013046420389809324}
-  - component: {fileID: 7965625255088148218}
-  - component: {fileID: 2291464293797136917}
-  - component: {fileID: 8863919125240462317}
-  - component: {fileID: 3809796566830955320}
+  - component: {fileID: 2589039352215300361}
+  - component: {fileID: 1913561433625449666}
+  - component: {fileID: 8647758009286273288}
+  - component: {fileID: 2514422709108955036}
   - component: {fileID: 1936441045532867387}
+  - component: {fileID: 3809796566830955320}
   m_Layer: 0
-  m_Name: Player
+  m_Name: TrainingDummy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4064,7 +4063,7 @@ Transform:
   - {fileID: 3710391094255182024}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4415165403767109555
+--- !u!114 &2589039352215300361
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4073,97 +4072,56 @@ MonoBehaviour:
   m_GameObject: {fileID: 6424602591147918604}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7665c23dd987478da6f6a7a8c5cdc7cc, type: 3}
+  m_Script: {fileID: 11500000, guid: 6080f1d7116448b7b63668242e270eb4, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerMovement
-  cameraTransform: {fileID: 0}
-  animationHandler: {fileID: 8863919125240462317}
-  runMoveSpeed: 12
-  walkMoveSpeed: 5
-  walkToggleHoldTime: 0.75
-  rotationSpeed: 12
-  gravity: -22
-  jumpHeight: 3
-  fallMultiplier: 2
-  dashDistance: 5
-  dashDuration: 0.4
-  dashCooldown: 0.5
-  dashRecoveryTime: 0.08
---- !u!114 &1013046420389809324
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6424602591147918604}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 901904da50ff4e53ace0d8701ae32d7c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerInputReader
---- !u!114 &7965625255088148218
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6424602591147918604}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1aca299bd5144b58974e402529a94c1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerMeleeAttack
-  animationHandler: {fileID: 8863919125240462317}
-  attackConfig: {fileID: 11400000, guid: afeb7abf6df7b4ddcad3a34f08bab5fd, type: 2}
---- !u!114 &2291464293797136917
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6424602591147918604}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1a1d441b18346269ba2d287ea8c51c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerHealth
-  animationHandler: {fileID: 8863919125240462317}
-  maxHp: 100
---- !u!114 &8863919125240462317
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6424602591147918604}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c48a7ebb7e3f4df282937ad5af36ede9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Player.Animation.PlayerAnimationHandler
+  m_EditorClassIdentifier: Assembly-CSharp::TrainingDummy.Animation.TrainingDummyAnimationHandler
   animator: {fileID: 3809796566830955320}
---- !u!95 &3809796566830955320
-Animator:
-  serializedVersion: 7
+--- !u!114 &1913561433625449666
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6424602591147918604}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: de13a7420582ded45a8d7d3f96889aca, type: 3}
-  m_Controller: {fileID: 9100000, guid: 4c5f5c2e45d091b48995f8a0d8ec47a4, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85c200dda1c24c45887061fd99be9024, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TrainingDummy.TrainingDummyHealth
+  animationHandler: {fileID: 2589039352215300361}
+  maxHp: 100
+  hitReactionCooldown: 1.2
+  hitStunDuration: 0.4
+--- !u!114 &8647758009286273288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424602591147918604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1a8aa39c1d648a2aa276fb9a635cddb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TrainingDummy.TrainingDummyMeleeAttacker
+  animationHandler: {fileID: 2589039352215300361}
+  attackConfig: {fileID: 11400000, guid: 20c5d9137ece1422fad2052222c4d18d, type: 2}
+--- !u!114 &2514422709108955036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424602591147918604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc537ad4063646b1ab124adfd1cfb1e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TrainingDummy.AI.TrainingDummyAI
+  target: {fileID: 0}
+  attackRange: 2
+  doAttack: 1
+  showAttackRange: 0
 --- !u!143 &1936441045532867387
 CharacterController:
   m_ObjectHideFlags: 0
@@ -4189,6 +4147,28 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!95 &3809796566830955320
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424602591147918604}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: de13a7420582ded45a8d7d3f96889aca, type: 3}
+  m_Controller: {fileID: 9100000, guid: 35005517d8b8e42658e4441d1d9463c5, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &6574362971524931523
 GameObject:
   m_ObjectHideFlags: 0

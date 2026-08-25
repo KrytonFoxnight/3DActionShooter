@@ -26,10 +26,11 @@ namespace Player
             _actions?.Dispose();
         }
 
-        public Vector2 MoveInput => _actions.Player.Move.ReadValue<Vector2>();  // 플레이어 이동 입력 전체
-        public bool IsWalkKeyHeld => _actions.Player.Walk.IsPressed();          // 걷기 전환키, 일정 시간 클릭 토글 방식
-        public Vector2 LookDelta => _actions.Player.Look.ReadValue<Vector2>();  // 카메라 회전 입력값, 마우스 delta 전체로 함, 스틱 관련이 기본으로 있긴 한데, 지금은 넘어갑니다.
-        public bool JumpPressed => _actions.Player.Jump.WasPressedThisFrame();  // 플레이어 점프 입력
-        public bool DashPressed => _actions.Player.Dash.WasPressedThisFrame(); // 플레이어 대시 입력
+        public Vector2 MoveInput => _actions.Player.Move.ReadValue<Vector2>();          // 플레이어 이동 입력 전체
+        public bool IsWalkKeyHeld => _actions.Player.Walk.IsPressed();                  // 걷기 전환키, 일정 시간 클릭 토글 방식
+        public Vector2 LookDelta => _actions.Player.Look.ReadValue<Vector2>();          // 카메라 회전 입력값, 마우스 delta 전체로 함, 스틱 관련이 기본으로 있긴 한데, 지금은 넘어갑니다.
+        public bool JumpPressed => _actions.Player.Jump.WasPressedThisFrame();          // 플레이어 점프 입력
+        public bool DashPressed => _actions.Player.Dash.WasPressedThisFrame();          // 플레이어 대시 입력
+        public bool AttackPressed => _actions.Player.Attack.WasPressedThisFrame();      // 플레이어 공격 입력
     }
 }

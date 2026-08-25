@@ -28,6 +28,19 @@
 - 줄바꿈: 전체 LF 통일 (`.gitattributes`, `.editorconfig` 적용됨). Windows/Mac 크로스 작업 전제.
 - 에셋 방향: Synty POLYGON 계열 아트 + RPG Character Mecanim Animation Pack + Mixamo 보강
 
+## 참고 레퍼런스 프로젝트 (로컬 클론)
+
+구조 참고용 오픈소스 프로젝트 2개가 이 저장소와 같은 부모 폴더(`../`)에 클론되어 있다.
+
+| 프로젝트 | 로컬 경로 | 용도 |
+|---|---|---|
+| Chop Chop (Unity Open Project #1) | `../open-project-1` | 1단계(싱글) 아키텍처 참고 — InputReader(SO) 입력 분리, SO 이벤트 시스템, SO 상태 머신, 오브젝트 풀링. "네트워크 대비 설계 훅"과 방향이 같다 |
+| Boss Room | `../com.unity.multiplayer.samples.coop` | 2단계(9월 NGO 코옵) 참고 — Netcode for GameObjects 패턴, 어빌리티/스포너/씬 관리. 1단계 중에는 전투·폴더 구조 참고만 |
+
+- 두 클론은 **읽기 전용**이다. 수정·커밋하지 않고, 이 저장소에 서브모듈로 편입하지도 않는다.
+- 코드를 통째로 복사하지 않는다. 패턴과 구조를 참고해 이 프로젝트 규모에 맞게 직접 구현한다 (과도한 추상화 금지 원칙 유지).
+- Chop Chop은 2021년 12월 개발 중단된 프로젝트다. 구조는 참고하되 API 사용법은 현재 Unity 버전 기준으로 검증한다.
+
 ## 고정 게임 루프
 
 ```text
