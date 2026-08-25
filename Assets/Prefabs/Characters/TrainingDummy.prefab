@@ -4088,6 +4088,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85c200dda1c24c45887061fd99be9024, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrainingDummy.TrainingDummyHealth
+  animationHandler: {fileID: 0}
   maxHp: 100
 --- !u!114 &8647758009286273288
 MonoBehaviour:
