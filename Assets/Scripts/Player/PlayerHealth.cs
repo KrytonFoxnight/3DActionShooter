@@ -28,19 +28,22 @@ namespace Player
         private void Update()
         {
             if(_hitReactionTimer > 0f) _hitReactionTimer -= Time.deltaTime;
-            if(_hitStunTimer > 0f) _hitStunTimer -= Time.deltaTime;
+            if(_hitStunTimer > 0f) _hitStunTimer -= Time.deltaTime;         // 경직 상태 관련
         }
 
         public void TakeDamage(int amount)
         {
             var applied = _health.ApplyDamage(amount);
-            if(applied <= 0) return;
+            if(applied <= 0) return; // 적용된 데미지가 없는 경우
 
+            // 데미지 처리
             Debug.Log($"Player took {applied} damage");
-            _hitStunTimer = hitStunDuration;
             Damaged?.Invoke();
 
-            if (_hitReactionTimer > 0f) return;
+            // 스턴 처리
+            _hitStunTimer = hitStunDuration;
+
+            if (_hitReactionTimer > 0f) return; // 피격 처리 중인 경우
 
             _hitReactionTimer = hitReactionCooldown;
             animationHandler.SetTrigger(PlayerAnimationStatus.GetHit);
