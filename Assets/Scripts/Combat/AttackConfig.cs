@@ -25,6 +25,11 @@ namespace Combat
         [Header("Interrupt")]
         [SerializeField] private bool interruptibleByHit    = true;         // 피격 판정이 현재 진행 중인 공격 처리를 중단할 수 있는가?
 
+        private void OnValidate()
+        {
+            if(hitImpactDelay > attackInterval) Debug.LogWarning($"{name}: 데미지 반영까지의 대기 시간이 공격 속도보다 깁니다. 실제 공격 주기가 hitImpactDelay로 동작합니다.", this);
+        }
+
         // Getters
         public int Damage => damage;
         public float AttackInterval => attackInterval;

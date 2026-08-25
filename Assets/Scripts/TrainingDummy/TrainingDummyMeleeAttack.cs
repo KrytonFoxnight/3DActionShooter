@@ -35,6 +35,7 @@ namespace TrainingDummy
         public bool TryAttack(Transform target)
         {
             if(_attackCooldownTimer > 0f) return false;
+            if(_pendingHit != null) return false;
             if(_health.IsInHitStun) return false;
             if(!target.TryGetComponent<IDamageable>(out var damageable)) return false;
 

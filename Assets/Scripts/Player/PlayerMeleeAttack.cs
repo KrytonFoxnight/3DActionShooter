@@ -48,6 +48,8 @@ namespace Player
             // 움직이지 못하는 경우 또는 피격으로 인한 경직 상태인 경우 (여러 요인이 겹치면 나중에 리팩토링 할 것)
             if (_movement.IsControlLocked || _health.IsInHitStun) return;
 
+            if (_pendingHit != null) return;
+
             // 공격 버튼을 누르지 않은 경우
             if (!_inputReader.AttackPressed)
             {
