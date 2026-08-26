@@ -9,12 +9,14 @@ namespace Player
     )]
     public class PlayerMovement : MonoBehaviour
     {
-        [Header("Components")] [SerializeField]
-        private Transform cameraTransform;
-
+        [Header("Components")]
+        [SerializeField] private Transform cameraTransform;
+        [SerializeField] private PlayerInputReader inputReader;
+        [SerializeField] private CharacterController characterController;
         [SerializeField] private PlayerAnimationHandler animationHandler;
 
         // 플레이어 관련 파라미터들
+        [Header("Movement Params")]
         [SerializeField] private float runMoveSpeed = 12f; // 달리기 속도
         [SerializeField] private float walkMoveSpeed = 5f; // 걷기 속도
         [SerializeField] private float walkToggleHoldTime = 0.75f; // 걷기 달리기 전환 홀드 시간
@@ -23,17 +25,16 @@ namespace Player
         [SerializeField] private float jumpHeight = 3f; // 점프 높이
         [SerializeField] private float fallMultiplier = 2f; // 하강 계수
 
-        [Header("Dash")] [SerializeField] private float dashDistance = 5f;
+        [Header("Dash Params")] [SerializeField] private float dashDistance = 5f;
         [SerializeField] private float dashDuration = 0.4f;
         [SerializeField] private float dashCooldown = 0.5f;
         [SerializeField] private float dashRecoveryTime = 0.08f;
 
+        private bool _initialized;
+
         // 블렌드트리 링 좌표. 안쪽 링(1)=걷기, 바깥 링(2)=달리기
         private const float WalkAnimValue = 1f;
         private const float RunAnimValue = 2f;
-
-        private PlayerInputReader _inputReader;
-        private CharacterController _characterController;
 
         private float _verticalVelocity;
         private bool _isWalking;
@@ -52,13 +53,21 @@ namespace Player
         private bool _isControlLocked;      // 시점 조작을 제외한 컨트롤이 잠긴 상태 추적
         private float _controlLockTimer;    // 잠긴 상태 추적 타이머
 
-        private void Awake()
+        #region Lifecycle
+
+        public bool IsInitialized => _initialized;
+
+        public bool Init()
         {
-            _inputReader = GetComponent<PlayerInputReader>();
-            _characterController = GetComponent<CharacterController>();
+            if (_initialized) return true;      // 이미 초기화된 것은 실패가 아니다
+            if(!cameraTransform || !inputReader || !characterController || !animationHandler) return false;
+
+            _initialized = true;
+
+            return true;
         }
 
-        private void Update()
+        public void Tick()
         {
             // 조작 잠금 관련 처리
             UpdateControlLockStatus();
@@ -73,13 +82,13 @@ namespace Player
             UpdatePlayerVerticalVelocity();
 
             // 이번 Frame 움직임 값, 내부적으로 충돌 처리까지 고려
-            _characterController.Move(PlayerVelocity * Time.deltaTime);
+            characterController.Move(PlayerVelocity * Time.deltaTime);
 
             var characterMoveDir = CameraRelativeMove; // 카메라 기준 움직여야 하는 방향
 
             if (_isDashing || _isControlLocked)
             {
-                animationHandler.SetBool(PlayerAnimationStatus.IsGrounded, _characterController.isGrounded);
+                animationHandler.SetBool(PlayerAnimationStatus.IsGrounded, characterController.isGrounded);
                 return;
             }
 
@@ -89,6 +98,13 @@ namespace Player
             // 캐릭터 애니메이터 처리
             UpdatePlayerAnimation(characterMoveDir);
         }
+
+        public void Dispose()
+        {
+            _initialized = false;
+        }
+
+        #endregion
 
         private void UpdateControlLockStatus()
         {
@@ -118,9 +134,9 @@ namespace Player
             }
 
             if (_isControlLocked) return;                               // 조작이 잠긴 경우
-            if (!_inputReader.DashPressed) return;                      // 이번 프레임에 대시가 없는 경우
+            if (!inputReader.DashPressed) return;                      // 이번 프레임에 대시가 없는 경우
             if (_dashCooldownTimer > 0f) return;                        // 대시 쿨다운이 남은 경우
-            if (!_characterController.isGrounded) return;               // 접지 상태가 아닌 경우
+            if (!characterController.isGrounded) return;               // 접지 상태가 아닌 경우
 
             // 댜시할 방향 결정, 움직이는 경우에는 카메라 방향으로 대시하고 정지 상태면 바라보는 방향으로 대시
             _dashDirection = CameraRelativeMove.sqrMagnitude > 0.01f
@@ -144,7 +160,7 @@ namespace Player
         // 기본 이동 토글 처리
         private void UpdateMoveModeToggle()
         {
-            if (_inputReader.IsWalkKeyHeld)
+            if (inputReader.IsWalkKeyHeld)
             {
                 _walkHoldTimer += Time.deltaTime;
                 if (!_walkToggleConsumed && _walkHoldTimer >= walkToggleHoldTime)
@@ -164,12 +180,12 @@ namespace Player
         private void UpdatePlayerVerticalVelocity()
         {
             // 캐릭터가 바닥에 있는 경우
-            if (_characterController.isGrounded)
+            if (characterController.isGrounded)
             {
                 _verticalVelocity = -2f; // 접지 상태 안정화 처리
 
                 // 점프 처리, 조작 잠금 중에는 점프 입력 무시
-                if (!_isControlLocked && _inputReader.JumpPressed)
+                if (!_isControlLocked && inputReader.JumpPressed)
                 {
                     _verticalVelocity = Mathf.Sqrt(jumpHeight * 2f * -gravity); // 제곱근 음수 방지를 위해 gravity 부호 역전 처리
                     animationHandler.SetTrigger(PlayerAnimationStatus.Jump);
@@ -207,7 +223,7 @@ namespace Player
             // 바로 바뀌면 너무 이상하니까 damp time 넣어줘서 점진적 변경되도록 처리
             animationHandler.SetFloat(PlayerAnimationStatus.MoveX, localMove.x * moveAnimValue, 0.1f, Time.deltaTime);
             animationHandler.SetFloat(PlayerAnimationStatus.MoveY, localMove.z * moveAnimValue, 0.1f, Time.deltaTime);
-            animationHandler.SetBool(PlayerAnimationStatus.IsGrounded, _characterController.isGrounded);
+            animationHandler.SetBool(PlayerAnimationStatus.IsGrounded, characterController.isGrounded);
         }
 
         // 플레이어 조작 잠금
@@ -224,7 +240,7 @@ namespace Player
 
         // WASD 입력을 카메라 기준 월드 수평 이동 방향으로 합성
         private Vector3 CameraRelativeMove =>
-            CameraForwardFlat * _inputReader.MoveInput.y + CameraRightFlat * _inputReader.MoveInput.x;
+            CameraForwardFlat * inputReader.MoveInput.y + CameraRightFlat * inputReader.MoveInput.x;
 
         // 플레이어 대시 속력
         private float DashSpeed => dashDistance / dashDuration;

@@ -4032,11 +4032,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1077758583369168451}
-  - component: {fileID: 4415165403767109555}
+  - component: {fileID: 5300120604579693176}
   - component: {fileID: 1013046420389809324}
-  - component: {fileID: 7965625255088148218}
-  - component: {fileID: 2291464293797136917}
   - component: {fileID: 8863919125240462317}
+  - component: {fileID: 7965625255088148218}
+  - component: {fileID: 4415165403767109555}
+  - component: {fileID: 2291464293797136917}
   - component: {fileID: 3809796566830955320}
   - component: {fileID: 1936441045532867387}
   m_Layer: 0
@@ -4064,7 +4065,7 @@ Transform:
   - {fileID: 3710391094255182024}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4415165403767109555
+--- !u!114 &5300120604579693176
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4073,22 +4074,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 6424602591147918604}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7665c23dd987478da6f6a7a8c5cdc7cc, type: 3}
+  m_Script: {fileID: 11500000, guid: dd03f865526c4096b1a619d8104c148a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerMovement
-  cameraTransform: {fileID: 0}
-  animationHandler: {fileID: 8863919125240462317}
-  runMoveSpeed: 12
-  walkMoveSpeed: 5
-  walkToggleHoldTime: 0.75
-  rotationSpeed: 12
-  gravity: -22
-  jumpHeight: 3
-  fallMultiplier: 2
-  dashDistance: 5
-  dashDuration: 0.4
-  dashCooldown: 0.5
-  dashRecoveryTime: 0.08
+  m_EditorClassIdentifier: Assembly-CSharp::Player.State.PlayerState
+  health: {fileID: 2291464293797136917}
+  movement: {fileID: 4415165403767109555}
+  meleeAttack: {fileID: 7965625255088148218}
 --- !u!114 &1013046420389809324
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4101,6 +4092,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 901904da50ff4e53ace0d8701ae32d7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerInputReader
+--- !u!114 &8863919125240462317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424602591147918604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c48a7ebb7e3f4df282937ad5af36ede9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.Animation.PlayerAnimationHandler
+  animator: {fileID: 3809796566830955320}
 --- !u!114 &7965625255088148218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4114,7 +4118,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerMeleeAttack
   animationHandler: {fileID: 8863919125240462317}
+  inputReader: {fileID: 1013046420389809324}
   attackConfig: {fileID: 11400000, guid: afeb7abf6df7b4ddcad3a34f08bab5fd, type: 2}
+--- !u!114 &4415165403767109555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424602591147918604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7665c23dd987478da6f6a7a8c5cdc7cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerMovement
+  cameraTransform: {fileID: 0}
+  inputReader: {fileID: 1013046420389809324}
+  characterController: {fileID: 1936441045532867387}
+  animationHandler: {fileID: 8863919125240462317}
+  runMoveSpeed: 12
+  walkMoveSpeed: 5
+  walkToggleHoldTime: 0.75
+  rotationSpeed: 12
+  gravity: -22
+  jumpHeight: 3
+  fallMultiplier: 2
+  dashDistance: 5
+  dashDuration: 0.4
+  dashCooldown: 0.5
+  dashRecoveryTime: 0.08
 --- !u!114 &2291464293797136917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4129,19 +4161,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerHealth
   animationHandler: {fileID: 8863919125240462317}
   maxHp: 100
---- !u!114 &8863919125240462317
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6424602591147918604}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c48a7ebb7e3f4df282937ad5af36ede9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Player.Animation.PlayerAnimationHandler
-  animator: {fileID: 3809796566830955320}
+  hitReactionCooldown: 1.2
+  hitStunDuration: 0.4
 --- !u!95 &3809796566830955320
 Animator:
   serializedVersion: 7

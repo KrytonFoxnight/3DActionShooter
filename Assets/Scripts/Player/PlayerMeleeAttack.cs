@@ -5,20 +5,19 @@ using UnityEngine;
 
 namespace Player
 {
-    [RequireComponent(typeof(PlayerHealth))]
     public class PlayerMeleeAttack : MonoBehaviour
     {
         private const int MaxHitTargets = 8;
 
-        [Header("Animation Handler"), SerializeField] private PlayerAnimationHandler animationHandler;
-
-        [Header("Config"), SerializeField] private AttackConfig attackConfig;
-
+        [Header("Components")]
+        [SerializeField] private PlayerAnimationHandler animationHandler;
+        [SerializeField] private PlayerInputReader inputReader;
+        [SerializeField] private AttackConfig attackConfig;
 
         private readonly Collider[] _hitBuffer = new Collider[MaxHitTargets];
 
-        private PlayerInputReader _inputReader;
-        private PlayerMovement _movement;
+        private bool _initialized;
+
         private PlayerHealth _health;
         private Coroutine _pendingHit;
         private float _attackCooldownTimer;
@@ -26,17 +25,24 @@ namespace Player
         private Vector3 HitboxCenter =>
             transform.position + transform.forward * attackConfig.AttackDistance + Vector3.up * attackConfig.AttackHeight;
 
-        private void Awake()
+        #region Lifecycle
+
+        public bool IsInitialized => _initialized;
+
+        public bool Init(PlayerHealth health)
         {
-            _inputReader = GetComponent<PlayerInputReader>();
-            _movement = GetComponent<PlayerMovement>();
-            _health = GetComponent<PlayerHealth>();
+            if(_initialized) return true;       // 이미 초기화된 것은 실패가 아니다
+            if (!health) return false;
+            if (!animationHandler || !inputReader || !attackConfig) return false;
+
+            _health = health;
+            _health.Damaged += CancelPendingHit;
+            _initialized = true;
+
+            return true;
         }
 
-        private void OnEnable() => _health.Damaged += CancelPendingHit;
-        private void OnDisable() => _health.Damaged -= CancelPendingHit;
-
-        private void Update()
+        public void Tick(bool canAttack)
         {
             // 공격 쿨다운 시간 남은 경우
             if (_attackCooldownTimer > 0)
@@ -45,13 +51,12 @@ namespace Player
                 return;
             }
 
-            // 움직이지 못하는 경우 또는 피격으로 인한 경직 상태인 경우 (여러 요인이 겹치면 나중에 리팩토링 할 것)
-            if (_movement.IsControlLocked || _health.IsInHitStun) return;
+            if (!canAttack) return;
 
             if (_pendingHit != null) return;
 
             // 공격 버튼을 누르지 않은 경우
-            if (!_inputReader.AttackPressed)
+            if (!inputReader.AttackPressed)
             {
                 return;
             }
@@ -61,6 +66,15 @@ namespace Player
             animationHandler.SetTrigger(PlayerAnimationStatus.Attack);
             _pendingHit = StartCoroutine(PerformAttackAfterDelay());
         }
+
+        public void Dispose()
+        {
+            if (_health != null) _health.Damaged -= CancelPendingHit;
+
+            _initialized = false;
+        }
+
+        #endregion
 
         // 도중에 어떠한 사유로 인해 공격이 중단된 경우, 데미지 반영이 되지 않도록 중단하는 처리
         private void CancelPendingHit()

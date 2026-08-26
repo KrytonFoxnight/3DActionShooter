@@ -13,6 +13,8 @@ namespace Player
         [SerializeField] private float hitReactionCooldown = 1.2f;
         [SerializeField] private float hitStunDuration = 0.4f;
 
+        private bool _initialized;
+
         private Health _health;
         private float _hitReactionTimer;
         private float _hitStunTimer;
@@ -20,16 +22,33 @@ namespace Player
         public event Action Damaged;
         public bool IsInHitStun => _hitStunTimer > 0f;
 
-        private void Awake()
+        #region Lifecycle
+
+        public bool IsInitialized => _initialized;
+
+        public bool Init()
         {
+            if (_initialized) return true;      // 이미 초기화된 것은 실패가 아니다
+            if (!animationHandler) return false;
+
             _health = new Health(maxHp);
+            _initialized = true;
+
+            return true;
         }
 
-        private void Update()
+        public void Tick()
         {
             if(_hitReactionTimer > 0f) _hitReactionTimer -= Time.deltaTime;
             if(_hitStunTimer > 0f) _hitStunTimer -= Time.deltaTime;         // 경직 상태 관련
         }
+
+        public void Dispose()
+        {
+            _initialized = false;
+        }
+
+        #endregion
 
         public void TakeDamage(int amount)
         {

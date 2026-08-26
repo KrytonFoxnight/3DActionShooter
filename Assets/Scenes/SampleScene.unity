@@ -590,7 +590,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1013046420389809324, guid: b6af5738aa537fe41b22c8c0920b2c3a, type: 3}
   m_PrefabInstance: {fileID: 4834949860371495356}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1897868369}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 901904da50ff4e53ace0d8701ae32d7c, type: 3}
@@ -793,6 +793,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1897868369 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6424602591147918604, guid: b6af5738aa537fe41b22c8c0920b2c3a, type: 3}
+  m_PrefabInstance: {fileID: 4834949860371495356}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1897868373 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2291464293797136917, guid: b6af5738aa537fe41b22c8c0920b2c3a, type: 3}
+  m_PrefabInstance: {fileID: 4834949860371495356}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1897868369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1a1d441b18346269ba2d287ea8c51c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerHealth
+--- !u!114 &1897868374 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7965625255088148218, guid: b6af5738aa537fe41b22c8c0920b2c3a, type: 3}
+  m_PrefabInstance: {fileID: 4834949860371495356}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1897868369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1aca299bd5144b58974e402529a94c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerMeleeAttack
+--- !u!114 &1897868375 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4415165403767109555, guid: b6af5738aa537fe41b22c8c0920b2c3a, type: 3}
+  m_PrefabInstance: {fileID: 4834949860371495356}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1897868369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7665c23dd987478da6f6a7a8c5cdc7cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerMovement
+--- !u!114 &1897868376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1897868369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd03f865526c4096b1a619d8104c148a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.State.PlayerState
+  health: {fileID: 1897868373}
+  movement: {fileID: 1897868375}
+  meleeAttack: {fileID: 1897868374}
 --- !u!1001 &4834949860371495356
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -852,7 +905,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6424602591147918604, guid: b6af5738aa537fe41b22c8c0920b2c3a, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 1897868376}
   m_SourcePrefab: {fileID: 100100000, guid: b6af5738aa537fe41b22c8c0920b2c3a, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
