@@ -1,5 +1,10 @@
 {
   "targets": {
-    "claude-code": { "plugins": ["agent-doc", "guide", "skill-manage", "post-issue"] }
+    "claude-code": {
+      "plugins": [
+        "agent-doc",
+        "skill-manage"
+      ]
+    }
   }
 }

@@ -1,34 +1,42 @@
-using System;
 using Combat;
-using TrainingDummy.Animation;
+using TrainingDummy.State;
 using UnityEngine;
 
 namespace TrainingDummy
 {
     public class TrainingDummyHealth : MonoBehaviour, IDamageable
     {
-        [SerializeField] private TrainingDummyAnimationHandler animationHandler;
         [SerializeField] private int maxHp = 100;
-        [SerializeField] private float hitReactionCooldown = 1.2f;
-        [SerializeField] private float hitStunDuration = 0.4f;
 
+        private TrainingDummyState _state;
         private Health _health;
-        private float _hitReactionTimer;
-        private float _hitStunTimer;
 
-        public event Action Damaged;
-        public bool IsInHitStun => _hitStunTimer > 0f;
+        private bool _initialized;
 
-        private void Awake()
+        public bool IsDepleted => _health.IsDepleted;
+
+        #region Lifecycle
+
+        public bool IsInitialized => _initialized;
+
+        public bool Init(TrainingDummyState state)
         {
+            if (_initialized) return true;      // 이미 초기화된 것은 실패가 아닌 것으로 처리, 다만 필요시 Enum 전환으로 상세하게 변경할 수 있음
+            if (!state) return false;
+
+            _state = state;
             _health = new Health(maxHp);
+            _initialized = true;
+
+            return true;
         }
 
-        private void Update()
+        public void Dispose()
         {
-            if (_hitReactionTimer > 0f) _hitReactionTimer -= Time.deltaTime;
-            if (_hitStunTimer > 0f) _hitStunTimer -= Time.deltaTime;
+            _initialized = false;
         }
+
+        #endregion
 
         public void TakeDamage(int amount)
         {
@@ -36,13 +44,10 @@ namespace TrainingDummy
             if (applied <= 0) return;
 
             Debug.Log($"Applied damage: {applied}");
-            _hitStunTimer = hitStunDuration;
-            Damaged?.Invoke();
 
-            if(_hitReactionTimer > 0f) return;
+            if (_health.IsDepleted) return;
 
-            _hitReactionTimer = hitReactionCooldown;
-            animationHandler.SetTrigger(TrainingDummyAnimationStatus.GetHit);
+            _state.ReceiveDamage();
         }
     }
 }

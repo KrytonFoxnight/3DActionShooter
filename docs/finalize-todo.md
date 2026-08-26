@@ -1,6 +1,6 @@
 # 포폴 3D 마무리 TODO
 
-> 기준일: 2026-08-25 (화)
+> 기준일: 2026-08-25 (화) / **08-26 갱신: 적 추적을 NavMesh 기반으로 전환**
 > **코드 마감: 2026-08-27(목) 오후. 이후 코드 수정 없음.**
 > 서류 접수: 08-25 ~ **09-07(월) 16:00**
 
@@ -29,23 +29,37 @@
 - [ ] 플레이어: 입력 차단 + 사망 모션
 - [ ] `OnDeath` 이벤트 발행 → 구독자가 처리
 
-### 1. 5.1 적 추적 이동 — ??? ← **유일한 진짜 코어**
+### 1. 5.1 적 추적 이동 (NavMesh) — ??? ← **유일한 진짜 코어**
 
-- [ ] 5.1-a 방향 벡터 (target - self, y 제거, normalize)
-- [ ] 5.1-b `CharacterController.Move`
-- [ ] 5.1-c 회전 보간
-- [ ] 5.1-d `stopDistance` 정지 ← **진동 발생 지점. 데드존으로 해결**
-- [ ] 5.1-e 걷기 애니메이션
+- [ ] 5.1-a `NavMeshSurface` 베이크 (빈 GO → Add Component → Bake, 5분)
+- [ ] 5.1-b 적에 `NavMeshAgent` + `SetDestination(player.position)`
+- [ ] 5.1-c 회전 — `agent.updateRotation` 기본값으로 됨. 안 되면 그때 손댐
+- [ ] 5.1-d `stoppingDistance` / `autoBraking` ← **진동 발생 지점**
+- [ ] 5.1-e 걷기 애니 — `agent.velocity.magnitude` → Animator 파라미터
 
-**방침:** NavMesh 안 씀. 벡터 연산 직접. (2.1 Cinemachine 미사용과 같은 판단)
+**방침 (08-26 변경):** NavMesh **씀.** 직전 "벡터 직접 구현" 방침 폐기.
+- 직접 구현에 포폴 이점 없음. 표준 도구 있고 실무에서 그걸 씀
+- 직전 근거였던 "2.1 Cinemachine과 같은 판단"은 **유비가 부정확했음.** 카메라 커스텀은 흔하고 경로탐색 재구현은 안 흔함
+- 씬이 Plane 하나 + 장애물 0개라 지금은 결과 동일. 장애물 놓는 순간 NavMesh만 회피를 보여줌
+
+⚠️ **`CharacterController` 병용 금지.** `NavMeshAgent` 전담. (둘 다 transform 밈 → 수동 동기화 배선 생김)
 **진동 나오면 원인·해결·검증 메모 남김** → 트러블슈팅 문서 재료
+→ 면접 포인트가 "직접 짰다" → **"파라미터 검증하고 조정했다"**로 옮겨감
 
 ### 2. 상태 전환 — 30분
 
-- [ ] `enum EnemyState { Idle, Chase, Attack, Dead }`
+- [ ] `enum EnemyStateType { Idle, Chase, Attack, Dead }` (컴포넌트 `EnemyState`와 구분 — Boss Room `AIBrain.cs:15` 방식)
 - [ ] `switch` 하나
 
-⚠️ FSM 클래스 계층 안 만듦. 과도한 추상화 금지.
+⚠️ FSM 클래스 계층 **미리** 안 만듦. 근데 나중에 교체 가능하게 **경계 넷은 지킴:**
+
+1. 전이는 `ChangeState(next)` 한 지점만 통과. 필드 직접 대입 금지 ← 나중에 `OnEnter`/`OnExit` 자리
+2. 판단/행동 분리 — `DecideNext()`(다음 상태 반환, 부작용 X) / `Tick()`(행동). `switch` 두 개가 상한
+3. 상태별 타이머·카운터는 `ChangeState`에서 초기화. 밖으로 안 흩뿌림
+4. 외부엔 `CurrentState` 읽기전용 + `OnStateChanged` 이벤트만 노출
+
+근거: Boss Room `AIBrain.cs:43-45`도 enum 안 버림. `Dictionary<AIStateType, AIState>` **키로 남김.**
+인터페이스는 지금 안 만듦. 상태 4개가 뭘 필요로 하는지 아직 모름. 안 맞으면 두 번 고침.
 
 ---
 

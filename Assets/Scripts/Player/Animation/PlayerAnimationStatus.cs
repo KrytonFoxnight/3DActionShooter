@@ -8,6 +8,7 @@ namespace Player.Animation
     {
         Attack,
         GetHit,
+        Death,
         Jump,
         Dash,
         IsGrounded,
@@ -25,6 +26,7 @@ namespace Player.Animation
             {
                 PlayerAnimationStatus.Attack => "Attack",
                 PlayerAnimationStatus.GetHit => "GetHit",
+                PlayerAnimationStatus.Death => "Death",
                 PlayerAnimationStatus.Jump => "Jump",
                 PlayerAnimationStatus.Dash => "Dash",
                 PlayerAnimationStatus.IsGrounded => "IsGrounded",
