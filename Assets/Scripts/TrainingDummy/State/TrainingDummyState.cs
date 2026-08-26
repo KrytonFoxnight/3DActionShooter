@@ -64,7 +64,6 @@ namespace TrainingDummy.State
 
         private void Tick()
         {
-            // 사망 상태 확인
             if (health.IsDepleted)
             {
                 ChangeState(TrainingDummyStateType.Dead);
@@ -81,10 +80,8 @@ namespace TrainingDummy.State
             Damaged?.Invoke();
         }
 
-        // 짧은 지속시간이 이미 걸린 긴 지속시간을 덮어쓰지 않도록 Max로 갱신한다.
         private void RefreshStun(float duration) => _hitStunEndTime = Mathf.Max(_hitStunEndTime, Time.time + duration);
 
-        // 경직과 지속시간이 다르다. 연타로 맞아도 모션이 매번 처음부터 다시 재생되지 않도록 별도 쿨다운을 둔다.
         private void PlayHitReaction()
         {
             if (Time.time < _hitReactionReadyTime) return;
