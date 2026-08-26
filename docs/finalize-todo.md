@@ -48,7 +48,7 @@
 
 ### 2. 상태 전환 — 30분
 
-- [ ] `enum EnemyState { Idle, Chase, Attack, Dead }`
+- [ ] `enum EnemyStateType { Idle, Chase, Attack, Dead }` (컴포넌트 `EnemyState`와 구분 — Boss Room `AIBrain.cs:15` 방식)
 - [ ] `switch` 하나
 
 ⚠️ FSM 클래스 계층 **미리** 안 만듦. 근데 나중에 교체 가능하게 **경계 넷은 지킴:**
