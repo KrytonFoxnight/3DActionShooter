@@ -4077,9 +4077,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd03f865526c4096b1a619d8104c148a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.State.PlayerState
+  animationHandler: {fileID: 8863919125240462317}
   health: {fileID: 2291464293797136917}
   movement: {fileID: 4415165403767109555}
   meleeAttack: {fileID: 7965625255088148218}
+  hitReactionCooldown: 1.2
 --- !u!114 &1013046420389809324
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4147,6 +4149,7 @@ MonoBehaviour:
   dashDuration: 0.4
   dashCooldown: 0.5
   dashRecoveryTime: 0.08
+  hitStunDuration: 0.4
 --- !u!114 &2291464293797136917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4159,10 +4162,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a1d441b18346269ba2d287ea8c51c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerHealth
-  animationHandler: {fileID: 8863919125240462317}
   maxHp: 100
-  hitReactionCooldown: 1.2
-  hitStunDuration: 0.4
 --- !u!95 &3809796566830955320
 Animator:
   serializedVersion: 7

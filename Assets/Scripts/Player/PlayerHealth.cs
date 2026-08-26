@@ -1,46 +1,35 @@
-using System;
 using Combat;
-using Player.Animation;
+using Player.State;
 using UnityEngine;
 
 namespace Player
 {
+    // 데미지 진입점과 HP 보관만 담당한다.
+    // 피격의 결과로 유닛이 무엇을 겪는지(경직·피격 모션)는 권한자(PlayerState)가 정한다.
     public class PlayerHealth : MonoBehaviour, IDamageable
     {
-        [SerializeField] private PlayerAnimationHandler animationHandler;
-
         [SerializeField] private int maxHp = 100;
-        [SerializeField] private float hitReactionCooldown = 1.2f;
-        [SerializeField] private float hitStunDuration = 0.4f;
 
+        private PlayerState _state;
+        private Health _health;
         private bool _initialized;
 
-        private Health _health;
-        private float _hitReactionTimer;
-        private float _hitStunTimer;
-
-        public event Action Damaged;
-        public bool IsInHitStun => _hitStunTimer > 0f;
+        public bool IsDepleted => _health.IsDepleted;
 
         #region Lifecycle
 
         public bool IsInitialized => _initialized;
 
-        public bool Init()
+        public bool Init(PlayerState state)
         {
             if (_initialized) return true;      // 이미 초기화된 것은 실패가 아니다
-            if (!animationHandler) return false;
+            if (!state) return false;
 
+            _state = state;
             _health = new Health(maxHp);
             _initialized = true;
 
             return true;
-        }
-
-        public void Tick()
-        {
-            if(_hitReactionTimer > 0f) _hitReactionTimer -= Time.deltaTime;
-            if(_hitStunTimer > 0f) _hitStunTimer -= Time.deltaTime;         // 경직 상태 관련
         }
 
         public void Dispose()
@@ -53,19 +42,14 @@ namespace Player
         public void TakeDamage(int amount)
         {
             var applied = _health.ApplyDamage(amount);
-            if(applied <= 0) return; // 적용된 데미지가 없는 경우
+            if (applied <= 0) return;   // 적용된 데미지가 없는 경우
 
-            // 데미지 처리
             Debug.Log($"Player took {applied} damage");
-            Damaged?.Invoke();
 
-            // 스턴 처리
-            _hitStunTimer = hitStunDuration;
+            // HP가 바닥난 타격은 피격이 아니라 사망이다. 사망 전이는 권한자가 다음 Tick에서 판단한다.
+            if (_health.IsDepleted) return;
 
-            if (_hitReactionTimer > 0f) return; // 피격 처리 중인 경우
-
-            _hitReactionTimer = hitReactionCooldown;
-            animationHandler.SetTrigger(PlayerAnimationStatus.GetHit);
+            _state.ReceiveDamage();
         }
     }
 }
