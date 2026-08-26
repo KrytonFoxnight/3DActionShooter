@@ -1,6 +1,7 @@
 using System.Collections;
 using Combat;
 using TrainingDummy.Animation;
+using TrainingDummy.State;
 using UnityEngine;
 
 namespace TrainingDummy
@@ -15,59 +16,77 @@ namespace TrainingDummy
         [SerializeField] private TrainingDummyAnimationHandler animationHandler;
         [SerializeField] private AttackConfig attackConfig;
 
-        private bool _initialized;
 
-        private TrainingDummyHealth _health;
+        private TrainingDummyState _state;
         private Coroutine _pendingHit;
-        private float _attackCooldownTimer;
+
+        private bool _initialized;
+        private float _attackReadyTime;
 
         #region Lifecycle
 
         public bool IsInitialized => _initialized;
 
-        public bool Init(TrainingDummyHealth health)
+        public bool Init(TrainingDummyState state)
         {
             if (_initialized) return true;      // 이미 초기화된 것은 실패가 아니다
-            if (!health) return false;
+            if (!state) return false;
             if (!animationHandler || !attackConfig) return false;
 
-            _health = health;
-            _health.Damaged += CancelPendingHit;
+            _state = state;
+
+            _state.Damaged += OnDamaged;
+            _state.Died += OnDeath;
+
             _initialized = true;
-
             return true;
-        }
-
-        public void Tick()
-        {
-            if (_attackCooldownTimer > 0f) _attackCooldownTimer -= Time.deltaTime;
         }
 
         public void Dispose()
         {
-            if (_health != null) _health.Damaged -= CancelPendingHit;
+            if (_state != null)
+            {
+                _state.Damaged -= OnDamaged;
+                _state.Died -= OnDeath;
+            }
+
+            CancelPendingHit();     // 잔여 공격 처리 정리
 
             _initialized = false;
         }
 
         #endregion
 
-        // 경직·사망으로 인한 공격 차단 판단은 권한자(TrainingDummyState)가 조합해 호출부에 넘긴다.
+        private bool CanAttack => Time.time >= _attackReadyTime && _pendingHit == null;
+
         public bool TryAttack(Transform target)
         {
-            if(_attackCooldownTimer > 0f) return false;
-            if(_pendingHit != null) return false;
+            if(!CanAttack) return false;
             if(!target.TryGetComponent<IDamageable>(out var damageable)) return false;
 
+            // 공격 처리 수행
             animationHandler.SetTrigger(TrainingDummyAnimationStatus.Attack);
-            _attackCooldownTimer = attackConfig.AttackInterval;
+            _attackReadyTime = Time.time + attackConfig.AttackInterval;
             _pendingHit = StartCoroutine(DealDamageAfterDelay(target, damageable));
+
             return true;
+        }
+
+        private void OnDamaged()
+        {
+            // 피해입었을때, 취소가 가능한 공격인지 체크
+            if (!attackConfig.InterruptibleByHit) return;
+
+            CancelPendingHit();
+        }
+
+        private void OnDeath()
+        {
+            CancelPendingHit();
         }
 
         private void CancelPendingHit()
         {
-            if (!attackConfig.InterruptibleByHit) return;
             if (_pendingHit == null) return;
 
             StopCoroutine(_pendingHit);

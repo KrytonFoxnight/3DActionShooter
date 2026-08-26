@@ -5,37 +5,34 @@ namespace TrainingDummy.AI
     public class TrainingDummyAI : MonoBehaviour
     {
         [SerializeField] private Transform target;
-
-        [SerializeField] private float attackRange          = 2f;
-        [SerializeField] private bool doAttack              = true;
-        [SerializeField] private bool showAttackRange       = false;
-
-        private bool _initialized;
+        [SerializeField] private float attackRange          = 2f;       // 공격 범위
+        [SerializeField] private bool doAttack              = true;     // 자동 공격 활성화 (디버그 용)
+        [SerializeField] private bool showAttackRange       = false;    // 공격 범위 (디버그 용)
 
         private TrainingDummyMeleeAttack _attack;
 
         #region Lifecycle
 
-        public bool IsInitialized => _initialized;
+        public bool IsInitialized { get; private set; }
 
         public bool Init(TrainingDummyMeleeAttack attack)
         {
-            if (_initialized) return true;      // 이미 초기화된 것은 실패가 아니다
+            if (IsInitialized) return true;      // 이미 초기화된 것은 실패 아닌 것으로 처리
             if (!attack) return false;
 
             _attack = attack;
-            _initialized = true;
+            IsInitialized = true;
 
             return true;
         }
 
-        // canAttack 판단은 권한자(TrainingDummyState)가 조합해서 넘긴다.
-        public void Tick(bool canAttack)
+        public void Tick()
         {
-            if (!canAttack) return;
+            // 공격 가능한 상태인지 확인
             if (!doAttack) return;
             if(target == null) return;
 
+            // 공격 처리 중에 거리가 다시 멀어진 경우 확인
             var sqrDist = (target.position - transform.position).sqrMagnitude;
             if(sqrDist > attackRange * attackRange) return;
 
@@ -44,7 +41,7 @@ namespace TrainingDummy.AI
 
         public void Dispose()
         {
-            _initialized = false;
+            IsInitialized = false;
         }
 
         #endregion

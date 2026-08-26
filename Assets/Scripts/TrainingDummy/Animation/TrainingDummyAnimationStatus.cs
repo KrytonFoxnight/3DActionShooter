@@ -8,6 +8,7 @@ namespace TrainingDummy.Animation
     {
         Attack,
         GetHit,
+        Death,
         Idle,
     }
 
@@ -19,6 +20,7 @@ namespace TrainingDummy.Animation
             {
                 TrainingDummyAnimationStatus.Attack => "Attack",
                 TrainingDummyAnimationStatus.GetHit => "GetHit",
+                TrainingDummyAnimationStatus.Death => "Death",
                 TrainingDummyAnimationStatus.Idle => "Idle",
                 _ => throw new ArgumentOutOfRangeException("invalid enum value: " + status)
             };

@@ -4076,6 +4076,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92fdf3152a53e426eb54efa5f845d4a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrainingDummy.State.TrainingDummyState
+  animationHandler: {fileID: 2589039352215300361}
   health: {fileID: 1913561433625449666}
   meleeAttack: {fileID: 8647758009286273288}
   ai: {fileID: 2514422709108955036}
@@ -4106,7 +4107,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TrainingDummy.TrainingDummyHealth
   animationHandler: {fileID: 2589039352215300361}
   maxHp: 100
-  hitReactionCooldown: 1.2
+  hitReactionCooldownDuration: 1.2
   hitStunDuration: 0.4
 --- !u!114 &8647758009286273288
 MonoBehaviour:

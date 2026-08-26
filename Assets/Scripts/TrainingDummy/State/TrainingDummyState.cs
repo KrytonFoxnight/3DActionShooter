@@ -1,24 +1,34 @@
+using System;
 using TrainingDummy.AI;
+using TrainingDummy.Animation;
 using UnityEngine;
 
 namespace TrainingDummy.State
 {
-    // 더미 유닛 상태의 권한자.
-    // 하위 컴포넌트의 초기화·구동 순서를 통제하고, 유닛 상태를 단독으로 소유한다.
-    // 하위는 사실(IsInHitStun 등)만 노출하고 상태를 직접 바꾸지 않는다.
     public class TrainingDummyState : MonoBehaviour
     {
+        [SerializeField] private TrainingDummyAnimationHandler animationHandler;
         [SerializeField] private TrainingDummyHealth health;
         [SerializeField] private TrainingDummyMeleeAttack meleeAttack;
         [SerializeField] private TrainingDummyAI ai;
 
+        // 마땅히 둘만한 곳이 없어서 이곳에 위치
+        [SerializeField] private float hitStunDuration = 0.4f;
+        [SerializeField] private float hitReactionCooldown = 1.2f;
+
+        public event Action Damaged;
+        public event Action Died;
+
         private TrainingDummyStateType _state = TrainingDummyStateType.Alive;
+        private float _hitStunEndTime;
+        private float _hitReactionReadyTime;
 
         public bool IsAlive => _state == TrainingDummyStateType.Alive;
-        private bool CanAttack => IsAlive && !health.IsInHitStun;
+        public bool IsInHitStun => Time.time < _hitStunEndTime;
+        private bool IsActionAllowed => IsAlive && !IsInHitStun;
 
-        // 구동 가능 여부는 하위의 초기화 상태에서 파생된다. 권한자가 따로 플래그를 들지 않는다.
         private bool IsReady =>
+            animationHandler != null &&
             health != null && health.IsInitialized &&
             meleeAttack != null && meleeAttack.IsInitialized &&
             ai != null && ai.IsInitialized;
@@ -35,17 +45,17 @@ namespace TrainingDummy.State
 
         private void OnDestroy()
         {
-            // 부분 초기화 상태여도 성공한 것은 정리해야 한다. 조건은 컴포넌트마다 개별 판단한다.
             Dispose();
         }
 
         private bool Init()
         {
-            var healthInitResult = health != null && health.Init();
-            var meleeAttackInitResult = health != null && meleeAttack != null && meleeAttack.Init(health);
+            var animationHandlerResult = animationHandler != null;
+            var healthInitResult = health != null && health.Init(this);
+            var meleeAttackInitResult = meleeAttack != null && meleeAttack.Init(this);
             var aiInitResult = meleeAttack != null && ai != null && ai.Init(meleeAttack);
 
-            var result = healthInitResult && meleeAttackInitResult && aiInitResult;
+            var result = animationHandlerResult && healthInitResult && meleeAttackInitResult && aiInitResult;
 
             if (!result) Debug.LogError("TrainingDummy Init Failed", this);
 
@@ -54,16 +64,54 @@ namespace TrainingDummy.State
 
         private void Tick()
         {
-            // 체력 처리는 사망 여부와 무관하게 돌려야 한다. (부활같은거 고려)
-            health.Tick();
+            // 사망 상태 확인
+            if (health.IsDepleted)
+            {
+                ChangeState(TrainingDummyStateType.Dead);
+                return;
+            }
 
-            if (!IsAlive) return;   // 사망 시 공격 구동 중단
-
-            meleeAttack.Tick();
-            ai.Tick(CanAttack);
+            if(IsActionAllowed) ai.Tick();
         }
 
-        // 초기화 역순으로 해제한다. 하위가 앞의 참조를 들고 있으므로 순서가 중요하다.
+        public void ReceiveDamage()
+        {
+            RefreshStun(hitStunDuration);
+            PlayHitReaction();
+            Damaged?.Invoke();
+        }
+
+        // 짧은 지속시간이 이미 걸린 긴 지속시간을 덮어쓰지 않도록 Max로 갱신한다.
+        private void RefreshStun(float duration) => _hitStunEndTime = Mathf.Max(_hitStunEndTime, Time.time + duration);
+
+        // 경직과 지속시간이 다르다. 연타로 맞아도 모션이 매번 처음부터 다시 재생되지 않도록 별도 쿨다운을 둔다.
+        private void PlayHitReaction()
+        {
+            if (Time.time < _hitReactionReadyTime) return;
+
+            _hitReactionReadyTime = Time.time + hitReactionCooldown;
+            animationHandler.SetTrigger(TrainingDummyAnimationStatus.GetHit);
+        }
+
+        private void ChangeState(TrainingDummyStateType next)
+        {
+            if (_state == next) return;     // 같은 상태로의 재진입 처리 안함
+
+            _state = next;
+
+            switch (next)
+            {
+                case TrainingDummyStateType.Dead:
+                    animationHandler.SetTrigger(TrainingDummyAnimationStatus.Death);
+                    Died?.Invoke();
+                    break;
+                case TrainingDummyStateType.Alive:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(next), next, null);
+            }
+        }
+
         private void Dispose()
         {
             if (ai != null && ai.IsInitialized) ai.Dispose();
