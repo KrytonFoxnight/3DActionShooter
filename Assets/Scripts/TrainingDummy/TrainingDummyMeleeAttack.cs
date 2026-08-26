@@ -9,34 +9,54 @@ namespace TrainingDummy
     /// 데미지 연산, 최소한의 기능 확인을 위해 구현된 연습용 더미의 공격 컴포넌트
     /// Player의 컴포넌트와 유사하게 처리됨
     /// </summary>
-    [RequireComponent(typeof(TrainingDummyHealth))]
     public class TrainingDummyMeleeAttack : MonoBehaviour
     {
-        [Header("Animation Handler"), SerializeField] private TrainingDummyAnimationHandler animationHandler;
-        [Header("Combat Config"), SerializeField] private AttackConfig attackConfig;
+        [Header("Components")]
+        [SerializeField] private TrainingDummyAnimationHandler animationHandler;
+        [SerializeField] private AttackConfig attackConfig;
+
+        private bool _initialized;
 
         private TrainingDummyHealth _health;
         private Coroutine _pendingHit;
         private float _attackCooldownTimer;
 
-        private void Awake()
+        #region Lifecycle
+
+        public bool IsInitialized => _initialized;
+
+        public bool Init(TrainingDummyHealth health)
         {
-            _health = GetComponent<TrainingDummyHealth>();
+            if (_initialized) return true;      // 이미 초기화된 것은 실패가 아니다
+            if (!health) return false;
+            if (!animationHandler || !attackConfig) return false;
+
+            _health = health;
+            _health.Damaged += CancelPendingHit;
+            _initialized = true;
+
+            return true;
         }
 
-        private void OnEnable() => _health.Damaged += CancelPendingHit;
-        private void OnDisable() => _health.Damaged -= CancelPendingHit;
-
-        private void Update()
+        public void Tick()
         {
             if (_attackCooldownTimer > 0f) _attackCooldownTimer -= Time.deltaTime;
         }
 
+        public void Dispose()
+        {
+            if (_health != null) _health.Damaged -= CancelPendingHit;
+
+            _initialized = false;
+        }
+
+        #endregion
+
+        // 경직·사망으로 인한 공격 차단 판단은 권한자(TrainingDummyState)가 조합해 호출부에 넘긴다.
         public bool TryAttack(Transform target)
         {
             if(_attackCooldownTimer > 0f) return false;
             if(_pendingHit != null) return false;
-            if(_health.IsInHitStun) return false;
             if(!target.TryGetComponent<IDamageable>(out var damageable)) return false;
 
             animationHandler.SetTrigger(TrainingDummyAnimationStatus.Attack);
