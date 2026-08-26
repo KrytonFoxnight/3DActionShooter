@@ -1,67 +1,66 @@
-# 유닛 상태 관리 권한 결정: 분산 소유 vs 권한자 컴포넌트
+# 유닛 상태 관리 권한 결정: 분산 소유 vs State 컴포넌트
 
 이 문서는 사망 처리 착수 시점(2026-08-26)에 드러난 **유닛 상태 소유권 문제**와 그 개선 방향을 기록합니다.
 
-- 결정: 유닛마다 **상태 소유·변경 권한을 독점하는 컴포넌트**를 둔다 (플레이어는 `PlayerState`, 적은 `EnemyState`).
-- 기각: 현행 유지(각 기능 컴포넌트가 자기 상태를 소유), 조회 창구만 만드는 방식(파사드).
+- 결정: 유닛마다 **상태 소유·변경 권한을 중앙 관리하는 컴포넌트**를 둔다 (플레이어는 `PlayerState`, 적은 `TrainingDummyState`).
 
 ---
 
 ## 1. 문제 — 유닛 상태에 주인이 없다
 
-"이 유닛이 지금 무엇을 할 수 있는가"를 결정하는 상태가 **세 컴포넌트에 나뉘어 소유**되어 있습니다.
+"이 유닛이 지금 무엇을 할 수 있는가"를 결정하는 상태가 **두 컴포넌트에 나뉘어 관리**되고 있습니다.
 
-| 상태 | 현재 소유자 | 위치 |
+| 상태 | 작업 전 소유자 | 위치 (작업 전 기준) |
 |---|---|---|
 | 조작 잠금 (`_isControlLocked` + 타이머) | `PlayerMovement` | `:93-100`, `:133-134`, `:214` |
-| 대시 (`_isDashing` + 타이머) | `PlayerMovement` | `:113-118`, `:131` |
-| 피격 경직 (`_hitStunTimer`) | `PlayerHealth` | `:18`, `:21`, `:44` |
-| 피격 리액션 쿨다운 (`_hitReactionTimer`) | `PlayerHealth` | `:17`, `:30`, `:46` |
+| Dash (`_isDashing` + 타이머) | `PlayerMovement` | `:113-118`, `:131` |
+| Hit Stun (`_hitStunTimer`) | `PlayerHealth` | `:18`, `:21`, `:44` |
+| Hit 리액션 쿨다운 (`_hitReactionTimer`) | `PlayerHealth` | `:17`, `:30`, `:46` |
 | **생사** | **없음** | 미구현 |
 
-이 중 대시는 이동 계산과 결합된 값이므로 `PlayerMovement`에서 이번에 새로 만들어지는 컴포넌트로 이전할 이유는 느끼지 못했습니다.
-이 문서가 지적하는 대상은 **여러 컴포넌트가 각자 읽어 조합하는 상태** — 조작 잠금, 피격 및 경직, 생사여부 입니다.
+이 중 Dash는 이동 계산과 결합된 값이므로 `PlayerMovement`에서 이번에 새로 만들어지는 컴포넌트로 이전할 이유는 느끼지 못했습니다.
+이 문서가 지적하는 대상은 **여러 컴포넌트가 각자 읽어 조합하는 상태** — 조작 잠금, Hit 및 Stun, 이번에 추가로 구현될 사망 처리에 대한 것입니다.
 
-그리고 이 상태를 **소비하는 쪽이 각자 조합**합니다.
+그리고 이 상태를 **사용하는 쪽이 각 컴포넌트가 노출한 정보를 각자 조합**합니다.
 
 ```csharp
 PlayerMovement.cs:80     if (_isDashing || _isControlLocked)                            // 회전·애니 스킵
-PlayerMovement.cs:117    if (_isControlLocked) return;                                  // 대시 차단
+PlayerMovement.cs:120    if (_isControlLocked) return;                                  // Dash 차단
 PlayerMovement.cs:172    if (!_isControlLocked && _inputReader.JumpPressed)             // 점프 차단
 PlayerMeleeAttack.cs:49  if (_movement.IsControlLocked || _health.IsInHitStun) return;  // 공격 차단
 ```
 
-`PlayerMeleeAttack.cs:49`가 문제를 가장 잘 보여줍니다. **다른 두 컴포넌트의 내부 상태를 각각 읽어 직접 AND 연산**합니다.
+`PlayerMeleeAttack.cs:49`가 문제를 가장 잘 보여줍니다. **다른 두 컴포넌트의 내부 상태를 각각 읽어 직접 AND 연산**하고 있었습니다.
 
 ### 왜 지금 문제가 되는가
 
 여기에 사망을 추가하면 `|| _health.IsDead`를 위 네 곳에 모두 붙여야 합니다.
-이후 무적 시간이나 추가 경직이 생기면 다시 네 곳입니다. **상태 N개 × 소비처 M개**로 늘어납니다.
+이후 무적 시간이나 추가 Stun이 생기면 다시 네 곳입니다. **상태 N개 × 소비처 M개**로 늘어납니다.
 
-이것은 추상화가 부족한 문제가 아니라 **상태 변경 권한이 흩어져 있는 문제**입니다.
+이것은 추상화가 부족한 문제가 아니라 **상태 변경 권한이 분산되어 있는 문제**입니다.
 `PlayerMovement.cs:133`처럼 상태 필드에 직접 대입하는 지점이 여러 곳에 존재하는 한, 규칙을 한 곳에서 읽을 수 없습니다.
 
-또한 각 컴포넌트가 자기 `Update()`를 독립적으로 돌기 때문에 **경직 타이머 감산과 공격 판정의 실행 순서가 Unity의 생명주기 함수에 맡겨져 있습니다.** 현재 눈에 띄는 증상은 없으나 순서 의존이 잠재해 있습니다.
+또한 각 컴포넌트가 자기 `Update()`를 독립적으로 돌기 때문에 **Stun 타이머 감산과 공격 판정의 실행 순서가 Unity의 생명주기 함수에 의존합니다.**
 
-이는 추후 콘텐츠 확장과 상태 관리 차원에서 문제를 야기할 것이며, 사망 상태를 추가하는 지금 이에 대한 기술 부채를 수거하기 좋은 타이밍이라고 판단했습니다.
+이는 추후 콘텐츠 확장과 상태 관리 차원에서 문제의 여지가 있으며, 사망 상태를 추가하는 지금 이에 대한 기술 부채를 수거하기 좋은 타이밍이라고 판단했습니다.
 
 ---
 
-## 2. 참고 레퍼런스
+## 2. 작업하기에 앞서, 참고 레퍼런스
 
-### Boss Room — `ServerCharacter`가 유닛의 단일 권한자
+### Boss Room — `ServerCharacter`가 유닛의 단일 State
 
-유닛 상태(HP, `LifeState`, 액션 큐, AI 브레인)를 한 컴포넌트가 관리합니다.
+유닛 상태(HP, `LifeState`, 액션 큐, AI 브레인)가 한 컴포넌트에 중앙화되어 관리됩니다.
 
 ```csharp
 NetworkLifeState.cs:7        enum LifeState { Alive, Fainted, Dead }
 
 ServerCharacter.cs:301       void ReceiveHP(ServerCharacter inflicter, int HP)
 ServerCharacter.cs:346           LifeState = LifeState.Dead;
-ServerCharacter.cs:354           m_ServerActionPlayer.ClearActions(false);
+ServerCharacter.cs:353           m_ServerActionPlayer.ClearActions(false);
 ```
 
-**데미지 → HP 감산 → 생사 판정 → 진행 중 액션 취소가 한 함수 안에서 순서대로 처리됩니다.** 상태 관리가 중앙화되어 있습니다.
+**데미지 → HP 감산 → 생사 판정 → 진행 중 액션 취소가 한 함수 안에서 순서대로 처리됩니다.**
 
 값을 보관하는 곳과 값을 바꿀 수 있는 곳이 분리되어 있다는 점도 중요합니다.
 
@@ -72,9 +71,9 @@ ServerCharacter.cs:81            get => NetLifeState.LifeState.Value;
 ServerCharacter.cs:82            private set => NetLifeState.LifeState.Value = value;   // 쓰기는 내부에서만
 ```
 
-값 자체는 별도 컴포넌트인 `NetworkLifeState`가 들고 있지만, **변경 권한은 `private set`으로 `ServerCharacter` 내부에 봉인**되어 있습니다. 외부에서는 읽을 수만 있습니다. 권한 분리가 규약이 아니라 언어 차원에서 강제됩니다.
+값 자체는 별도 컴포넌트인 `NetworkLifeState`가 들고 있지만, **변경 권한은 `private set`으로 `ServerCharacter` 내부에 은닉**되어 있습니다.
 
-상태를 소비하는 쪽은 개별 플래그를 조합하지 않고 권한자에게 묻는 방식으로 책임을 분리하고 있습니다.
+상태를 소비하는 쪽이 필요한 상태에 대해서 State에게 묻는 방식으로 책임을 분리하고 있습니다.
 
 ```csharp
 ServerCharacter.cs:90        public bool IsValidTarget => LifeState != LifeState.Dead;
@@ -84,28 +83,17 @@ AIBrain.cs:101               potentialFoe.LifeState != LifeState.Alive        //
 애니메이션도 데미지 코드가 직접 호출하지 않고 **상태 변화를 구독**합니다.
 
 ```csharp
-ServerAnimationHandler.cs:31 void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
+ServerAnimationHandler.cs:30 void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
                                  switch (newValue) { ... NetworkAnimator.SetTrigger(...) }
 ```
 
-하위 컴포넌트는 자기 `Update()`를 돌지 않고 **권한자가 직접 tick** 합니다. 실행 순서가 코드에 드러나므로 컴포넌트 간 순서 의존이 생기지 않습니다.
+State가 소유한 객체들은 **State에 의해 tick이 수행됩니다.** 실행 순서가 State의 코드에 명시적으로 드러나므로 순서 의존을 비교적 명확하게 설계할 수 있습니다.
 
 ```csharp
 ServerCharacter.cs:382       void Update()
 ServerCharacter.cs:384           m_ServerActionPlayer.OnUpdate();
 ServerCharacter.cs:385           if (m_AIBrain != null && LifeState == LifeState.Alive && m_BrainEnabled)
 ServerCharacter.cs:387               m_AIBrain.Update();
-```
-
-권한자가 사망을 소유하므로 **AI 상태 enum에는 `DEAD`가 없습니다** (`AIBrain.cs:15` — `{ ATTACK, IDLE }`).
-`:385`의 가드가 그 경계입니다. 죽으면 브레인을 아예 돌리지 않으므로 `AIBrain`은 "살아있을 때 무엇을 할지"만 다루면 됩니다.
-이는 사망을 AI 상태로 두면 안 된다는 일반 원칙이 아니라, **상위 권한자가 있을 때 하위가 가벼워진다**는 사례입니다.
-
-부수적으로, 사망 후 비활성화 지연도 코드 상수가 아니라 인스펙터 값입니다.
-
-```csharp
-ServerCharacter.cs:341       if (m_KilledDestroyDelaySeconds >= 0.0f && LifeState != LifeState.Dead)
-ServerCharacter.cs:343           StartCoroutine(KilledDestroyProcess());
 ```
 
 ### Chop Chop — 상태 저장소와 변경 권한의 분리
@@ -117,8 +105,8 @@ Protagonist.cs:15   //These fields are read and manipulated by the StateMachine 
 Damageable.cs:24    //Flags that the StateMachine uses for Conditions to move between states
 ```
 
-`Protagonist`는 상태를 보관하고, **변경 권한은 StateMachine이 독점**합니다.
-이동·공격 컴포넌트가 자기 상태를 직접 소유하지 않습니다. 읽는 주체와 쓰는 주체가 코드 차원으로 분리되어 있습니다.
+`Protagonist`는 상태를 보관하고, 그것을 읽고 조작하는 것은 **StateMachine Actions**입니다.
+다만 필드가 `public`이라 강제되지는 않습니다. 주석으로 약속된 프로젝트의 관례이며, Boss Room의 `private set`(`:82`)과는 강도가 다릅니다.
 
 ---
 
@@ -126,46 +114,60 @@ Damageable.cs:24    //Flags that the StateMachine uses for Conditions to move be
 
 유닛 상태를 단독 소유하고 변경 권한을 독점하는 컴포넌트를 둡니다.
 
-| | 현재 | 개선 후 |
+| | 작업 전 | 개선 후 |
 |---|---|---|
 | 잠금 소유 | `PlayerMovement._isControlLocked` | `PlayerState` |
-| 경직 소유 | `PlayerHealth._hitStunTimer` | `PlayerState` |
+| Stun 소유 | `PlayerHealth._hitStunTimer` | `PlayerState` |
 | 생사 소유 | 없음 | `PlayerState` |
 | 잠금 설정 | `PlayerMovement.cs:133` 필드 직접 대입 | `_state.LockControl(d)` 요청 |
-| 경직 설정 | `PlayerHealth.cs:44` 필드 직접 대입 | `_state.ApplyStun(d)` 요청 |
+| Stun 설정 | `PlayerHealth.cs:44` 필드 직접 대입 | `_state.ApplyStun(d)` 요청 |
 | 행동 가능 조회 | `PlayerMeleeAttack.cs:49` 두 컴포넌트 AND | `_state.CanAttack` |
 | 사망 애니 | (미구현) | `Died` 이벤트 구독 |
 
-**핵심은 조회가 아니라 대입입니다.** 상태 필드에 직접 쓰는 지점을 없애고 전부 권한자의 메서드를 통과시킵니다.
-새 상태가 추가되면 권한자 내부의 규칙만 고치면 되고, 소비처는 건드리지 않습니다.
-
-이는 `CLAUDE.md` 3절에 이미 정의한 상태 머신 경계 원칙 ①과 같은 규율입니다 —
-*"전이는 반드시 `ChangeState(next)` 한 지점을 통과한다. 상태 필드 직접 대입 금지."*
-적 상태 머신에만 적용하려던 원칙이지만, 플레이어에도 동일하게 필요했습니다.
-
-### 적 유닛
-
-적은 `EnemyState`가 그대로 권한자 역할을 합니다. 플레이어와 달리 상태 전이가 있으므로 내부에 상태 머신을 겸합니다.
-Boss Room과 달리 상위 권한자 계층(`ServerCharacter`)이 없으므로, **`Dead`를 상태 머신 안에 유지**합니다.
-`TrainingDummyHealth`는 데미지 계산만 담당하는 얇은 실행자로 남습니다.
+**핵심은 조회가 아니라 대입입니다.** 상태 필드에 직접 쓰는 지점을 없애고 전부 State의 메서드를 통과시킵니다.
+새 상태가 추가되면 State 내부의 규칙만 고치면 되고, 소비처는 건드리지 않습니다.
 
 ---
 
-## 4. 기존 결정과의 관계
+## 4. 구현 결과
 
-[플레이어 구조 결정](./component-architecture-decision.md)에서 기각한 **방식 A(중앙 `Player.cs`)로 되돌아가는 것이 아닙니다.** 중앙화하는 대상이 다릅니다.
+계획과 달라진 지점만 적습니다.
 
-| | 방식 A (기각됨) | 이번 결정 |
+| 항목 | 계획 | 실제 |
 |---|---|---|
-| 중앙화 대상 | **로직** — 이동·공격·피격의 실행 | **상태 소유권** |
-| 실행 주체 | 중앙 `Player.cs` | `PlayerMovement` / `PlayerMeleeAttack` 유지 |
-| 결과 | 갓클래스 위험 | 기능 단위 분리 유지 |
+| Stun 소유 | `PlayerState` | `PlayerMovement` (`PlayerMovement.cs:214`) |
+| 잠금 설정 | `_state.LockControl(d)` 요청 | 하위가 소유하고 State는 사실만 조회 (`PlayerState.cs:25`) |
+| Stun 설정 | `_state.ApplyStun(d)` | `ReceiveDamage()` 내부로 종속 (`PlayerState.cs:75`) |
 
-Chop Chop이 정확히 이 분리입니다. `Protagonist`는 상태만 보관하고 실행은 StateMachine Actions가 합니다.
+- **Stun 소유자는 유닛 구성을 따릅니다.**
+  - Stun은 움직임 제약이므로 이동 컴포넌트가 있으면 해당 컴포넌트가 책임을 지도록 했습니다. 다만 더미는 이동이 없어 State 컴포넌트가 겸하도록 했습니다.
+
+- **움직임 잠금과 Stun에 대한 값은 하위 컴포넌트가 소유하고, State는 이를 읽어 처리합니다.**
+  - 원래 계획은 State가 해당값까지 소유하는 형태였으나, 조작 잠금 시간이 `dashDuration + dashRecoveryTime`으로 계산되는 값이라 State가 가져가면 Dash 파라미터와 그 결과가 두 컴포넌트로 흩어집니다.
+  - State는 `IsInHitStun`·`IsControlLocked`를 사실로 읽어 행동 허용 여부만 판단합니다 (`PlayerState.cs:25`).
+
+- **Stun 처리가 Hit에 종속된다고 판단해 진입점을 `ReceiveDamage()` 하나로 줄였습니다.**
+  - 다만 Stun이라는 개념을 다른 곳에서도 활용하기 용이하게 API는 별도로 유지했습니다. (감전 상태같은거 추가할 때 등)
+
+구현하며 추가로 결정한 것:
+
+- **유닛의 Unity 생명주기 진입점을 State 하나로 모았습니다.**
+  - `Awake`/`Update`/`OnDestroy`를 가진 것은 `PlayerState`와 `TrainingDummyState`뿐이고, 하위는 `Init`/`Tick`/`Dispose`를 State가 순서대로 호출합니다 (`PlayerState.cs:62`).
+  - 단, `PlayerInputReader`의 경우 Input System의 구독·해제가 `OnEnable`/`OnDisable`에 묶여 있고 게임 Tick에 포함될 요소가 아니라고 판단하여 기존 상태를 유지했습니다.
+
+- **타이머를 전부 타임스탬프 방식으로 개선했습니다.** (`TrainingDummyMeleeAttack.cs:60`, `PlayerMovement.cs:214`).
+  - 남은 시간 감산은 매 프레임 갱신이 필요해 컴포넌트 구동 순서에 의존합니다.
+  - 또한 해당 방식의 판정 처리를 매 프레임 갱신 방법으로 접근할 필요성이 없었습니다.
+
+- **`Damaged`와 `Died`를 나눴습니다** (`TrainingDummyMeleeAttack.cs:76,84`).
+  - 슈퍼아머(`InterruptibleByHit = false`)는 "Hit이 안 끊는다"는 규칙이지 "죽어도 안 끊는다"가 아닙니다.
+
+- **기존의 Health.IsDead가 혼동을 주는 변수명이어서 좀 더 적합한 IsDepleted로 개선했습니다.**
+  - `IsActionAllowed`(유닛이 행동해도 되는가)와 `CanAttack`(행동이 준비됐는가)도 같은 맥락입니다.
 
 ---
 
-## 5. 남은 문제
+## 5. 발견은 했지만 일단 넘어가는 것
 
-- `PlayerHealth`와 `TrainingDummyHealth`의 구조 중복은 이번 작업으로 줄어들지만 사라지지는 않습니다. 애니메이션 상태 enum이 타입 파라미터로 올라가야 완전히 공통화되는데, 제네릭 MonoBehaviour의 인스펙터 직렬화 문제와 기존 프리팹 참조 재배선 비용이 이득보다 크다고 판단, 또한 YAGNI를 고려했을때 당장은 필요하지 않은 조치라고 판단되어 의도적으로 남깁니다.
-- 컴포넌트 간 실행 순서 의존은 tick 중앙화를 하지 않는 한 여전이 잔존하는 문제이지만, 당장 문제를 야기하는 요소가 아니기에 프로젝트 고도화 된 이후 청산합니다.
+- 유닛의 사망 판정을 State의 `Tick` 폴링으로 처리하는데, 데미지 처리는 Coroutine 단계에서 도착하므로 그 프레임의 `Update`는 이미 지나간 뒤입니다. 전이가 항상 한 프레임 늦습니다. 다만 기능 구현을 위한 상태에 있어 크나큰 문제를 야기하는 요소는 아니라고 판단, 중요해지는 순간이 오기 전까지 손대지 않기로 했습니다.
+  - Boss Room(`ServerCharacter.cs:341`)과 Chop Chop(`Damageable.cs:72`)의 내용을 참고하여 개선점은 찾아두고 넘어갑니다.
