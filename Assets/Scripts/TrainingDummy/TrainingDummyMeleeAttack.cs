@@ -63,6 +63,7 @@ namespace TrainingDummy
         {
             if(!CanAttack) return false;
             if(!target.TryGetComponent<IDamageable>(out var damageable)) return false;
+            if(damageable.IsDepleted) return false;
 
             // 공격 처리 수행
             animationHandler.SetTrigger(TrainingDummyAnimationStatus.Attack);
