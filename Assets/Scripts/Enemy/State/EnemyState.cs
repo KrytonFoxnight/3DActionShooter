@@ -16,6 +16,8 @@ namespace Enemy.State
         [SerializeField] private EnemyAI ai;
         [SerializeField] private EnemyHpBarPresenter healthBarPresenter;
 
+        [SerializeField] private string displayName = "Enemy";
+
         [SerializeField] private float hitReactionCooldown = 1.2f;
 
         public event Action Damaged;
@@ -23,6 +25,8 @@ namespace Enemy.State
 
         private EnemyStateType _state = EnemyStateType.Alive;
         private float _hitReactionReadyTime;
+
+        public string DisplayName => displayName;
 
         public bool IsAlive => _state == EnemyStateType.Alive;
 

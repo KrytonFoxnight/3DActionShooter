@@ -23,6 +23,8 @@ namespace UI.HealthBarUI.EnemyUI.EnemyHpBar
         private EnemyHpBarView _view = null!;
         private Camera _camera = null!;
 
+        private bool _suppressed;
+
         private float? _hideAt;
         private bool _hidden;
         private bool _initialized;
@@ -56,6 +58,9 @@ namespace UI.HealthBarUI.EnemyUI.EnemyHpBar
             return true;
         }
 
+        // 표시 억제 API
+        public void SetSuppressed(bool suppressed) => _suppressed = suppressed;
+
         public void Dispose()
         {
             _health.Changed -= Refresh;
@@ -65,6 +70,7 @@ namespace UI.HealthBarUI.EnemyUI.EnemyHpBar
             _view = null!;
             _health = null!;
             _camera = null!;
+            _suppressed = false;
             _hideAt = null;
             _hidden = false;
             _initialized = false;
@@ -75,6 +81,12 @@ namespace UI.HealthBarUI.EnemyUI.EnemyHpBar
         private void LateUpdate()
         {
             if (!_initialized || _hidden) return;
+
+            if (_suppressed)
+            {
+                _view.SetVisible(false);
+                return;
+            }
 
             if (_hideAt.HasValue && Time.time >= _hideAt.Value)
             {

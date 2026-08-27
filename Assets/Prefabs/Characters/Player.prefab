@@ -1814,6 +1814,38 @@ Transform:
   - {fileID: 2348082587856722749}
   m_Father: {fileID: 1077758583369168451}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2667500099400771526
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4318561657630803738}
+  m_Layer: 6
+  m_Name: Anchors
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4318561657630803738
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2667500099400771526}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1549563895869455187}
+  m_Father: {fileID: 1077758583369168451}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2674856278437546346
 GameObject:
   m_ObjectHideFlags: 0
@@ -1908,6 +1940,37 @@ Transform:
   m_Children:
   - {fileID: 3984250477143386603}
   m_Father: {fileID: 8450164484170275717}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2818802541437358710
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1549563895869455187}
+  m_Layer: 6
+  m_Name: NearestEnemyHpBar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1549563895869455187
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2818802541437358710}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.089, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4318561657630803738}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2840928630446833358
 GameObject:
@@ -4041,6 +4104,7 @@ GameObject:
   - component: {fileID: 4676506921555866841}
   - component: {fileID: 3809796566830955320}
   - component: {fileID: 1936441045532867387}
+  - component: {fileID: 7082830720262589830}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -4064,6 +4128,7 @@ Transform:
   - {fileID: 5867393182369281517}
   - {fileID: 6002645835050040198}
   - {fileID: 3710391094255182024}
+  - {fileID: 4318561657630803738}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5300120604579693176
@@ -4083,6 +4148,7 @@ MonoBehaviour:
   movement: {fileID: 4415165403767109555}
   meleeAttack: {fileID: 7965625255088148218}
   nearestEnemyScanner: {fileID: 4676506921555866841}
+  nearestEnemyHpBarPresenter: {fileID: 7082830720262589830}
   hitReactionCooldown: 1.2
 --- !u!114 &1013046420389809324
 MonoBehaviour:
@@ -4227,6 +4293,21 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &7082830720262589830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424602591147918604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c4e5b401fb4464d9d6529aa1dce6fc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UI.HealthBarUI.PlayerUI.NearestEnemyHpBar.NearestEnemyHpBarPresenter
+  view: {fileID: 0}
+  anchor: {fileID: 1549563895869455187}
+  worldHeightOffset: 0
 --- !u!1 &6574362971524931523
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,7 @@
+using Combat;
 using Enemy;
+using Enemy.State;
+using UI.HealthBarUI.EnemyUI.EnemyHpBar;
 using UnityEngine;
 
 namespace Player
@@ -22,6 +25,10 @@ namespace Player
         public bool IsInitialized => _initialized;
 
         private EnemyHealth _nearestEnemyHealth;
+        private EnemyHpBarPresenter _suppressedPresenter;
+
+        public Health NearestHealth { get; private set; }
+        public string NearestDisplayName { get; private set; } = string.Empty;
 
         public bool Init()
         {
@@ -39,12 +46,18 @@ namespace Player
             if (Time.time >= _nextScanTime) Scan();
 
             UpdateNearestEnemyHealth();
+            ProcessNearestEnemyHealthBar();
         }
 
         public void Dispose()
         {
+            if (_suppressedPresenter) _suppressedPresenter.SetSuppressed(false);
+
             _candidates = System.Array.Empty<EnemyHealth>();
             _nearestEnemyHealth = null;
+            _suppressedPresenter = null;
+            NearestHealth = null;
+            NearestDisplayName = string.Empty;
             _initialized = false;
         }
 
@@ -84,5 +97,26 @@ namespace Player
 
                     _nearestEnemyHealth = nearest;
                 }
+
+        private void ProcessNearestEnemyHealthBar()
+        {
+            var next = _nearestEnemyHealth &&
+                       _nearestEnemyHealth.TryGetComponent<EnemyHpBarPresenter>(out var presenter)
+                ? presenter
+                : null;
+
+            if (ReferenceEquals(_suppressedPresenter, next)) return;
+
+            if (_suppressedPresenter) _suppressedPresenter.SetSuppressed(false);
+            if (next) next.SetSuppressed(true);
+
+            _suppressedPresenter = next;
+
+            NearestHealth = _nearestEnemyHealth ? _nearestEnemyHealth.Model : null;
+            NearestDisplayName = _nearestEnemyHealth &&
+                                 _nearestEnemyHealth.TryGetComponent<EnemyState>(out var state)
+                ? state.DisplayName
+                : string.Empty;
+        }
     }
 }
