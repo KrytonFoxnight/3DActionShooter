@@ -2,6 +2,7 @@ using System;
 using Enemy.AI;
 using Enemy.Animation;
 using Enemy.Movement;
+using UI.HealthBarUI;
 using UnityEngine;
 
 namespace Enemy.State
@@ -13,6 +14,7 @@ namespace Enemy.State
         [SerializeField] private EnemyMovement movement;
         [SerializeField] private EnemyMeleeAttack meleeAttack;
         [SerializeField] private EnemyAI ai;
+        [SerializeField] private HealthBarPresenter healthBarPresenter;
 
         [SerializeField] private float hitReactionCooldown = 1.2f;
 
@@ -31,7 +33,8 @@ namespace Enemy.State
             health != null && health.IsInitialized &&
             movement != null && movement.IsInitialized &&
             meleeAttack != null && meleeAttack.IsInitialized &&
-            ai != null && ai.IsInitialized;
+            ai != null && ai.IsInitialized &&
+            healthBarPresenter != null && healthBarPresenter.IsInitialized;
 
         private void Awake()
         {
@@ -50,13 +53,21 @@ namespace Enemy.State
 
         private bool Init()
         {
-            var animationHandlerResult = animationHandler != null;
+            // LOGIC
             var healthInitResult = health != null && health.Init(this);
             var movementInitResult = movement != null && movement.Init();
             var meleeAttackInitResult = meleeAttack != null && meleeAttack.Init(this);
             var aiInitResult = ai != null && movement != null && meleeAttack != null && ai.Init(movement, meleeAttack);
 
-            var result = animationHandlerResult && healthInitResult && movementInitResult && meleeAttackInitResult && aiInitResult;
+            // ANIMATION
+            var animationHandlerResult = animationHandler != null;
+
+            // UI
+            var healthBarInitResult =
+                healthBarPresenter != null && healthInitResult && healthBarPresenter.Init(health.Model);
+
+            var result = animationHandlerResult && healthInitResult && movementInitResult && meleeAttackInitResult &&
+                         aiInitResult && healthBarInitResult;
 
             if (!result) Debug.LogError("Enemy Init Failed", this);
 
@@ -100,6 +111,7 @@ namespace Enemy.State
             switch (next)
             {
                 case EnemyStateType.Dead:
+                    healthBarPresenter.HideAfterDelay();
                     movement.Halt();
                     animationHandler.SetFloat(EnemyAnimationStatus.MoveSpeed, 0f);
                     animationHandler.SetTrigger(EnemyAnimationStatus.Death);
@@ -114,6 +126,7 @@ namespace Enemy.State
 
         private void Dispose()
         {
+            if (healthBarPresenter != null && healthBarPresenter.IsInitialized) healthBarPresenter.Dispose();
             if (ai != null && ai.IsInitialized) ai.Dispose();
             if (meleeAttack != null && meleeAttack.IsInitialized) meleeAttack.Dispose();
             if (movement != null && movement.IsInitialized) movement.Dispose();

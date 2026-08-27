@@ -2584,6 +2584,38 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.25519583, y: -0.07867024, z: -0.000073224306}
     m_Extent: {x: 0.32439306, y: 0.2883675, z: 0.8075824}
   m_DirtyAABB: 0
+--- !u!1 &4091643886923211740
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4673849608464633276}
+  m_Layer: 0
+  m_Name: Anchors
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4673849608464633276
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4091643886923211740}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2814510709326387004}
+  m_Father: {fileID: 1077758583369168451}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4252727571623572564
 GameObject:
   m_ObjectHideFlags: 0
@@ -4041,6 +4073,7 @@ GameObject:
   - component: {fileID: 3809796566830955320}
   - component: {fileID: 4124191567645074389}
   - component: {fileID: 6879398589668204210}
+  - component: {fileID: 9215073005994342925}
   m_Layer: 6
   m_Name: Enemy
   m_TagString: Untagged
@@ -4064,6 +4097,7 @@ Transform:
   - {fileID: 5867393182369281517}
   - {fileID: 6002645835050040198}
   - {fileID: 3710391094255182024}
+  - {fileID: 4673849608464633276}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7234306381003313989
@@ -4079,7 +4113,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy.AI.EnemyAI
   target: {fileID: 0}
-  detectionRange: 999999
   attackRange: 2
   rangeHysteresis: 0.5
   showRanges: 0
@@ -4137,11 +4170,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy.Movement.EnemyMovement
   agent: {fileID: 4124191567645074389}
   animationHandler: {fileID: 3720884876826900016}
-  facingSpeed: 720
+  faceRotateSensitivity: 0.001
   hitStunDuration: 0.4
   repathThreshold: 0.5
   moveSpeedDampTime: 0.01
-  referenceLocomotionClip: {fileID: 5987713911036300057, guid: 081930da5e255e348940373200bbeaca, type: 3}
+  referenceRunClipSpeed: 10
 --- !u!114 &1555060843833722079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4159,6 +4192,7 @@ MonoBehaviour:
   movement: {fileID: 468788282767155856}
   meleeAttack: {fileID: 7878090033663388524}
   ai: {fileID: 7234306381003313989}
+  healthBarPresenter: {fileID: 9215073005994342925}
   hitReactionCooldown: 1.2
 --- !u!95 &3809796566830955320
 Animator:
@@ -4227,6 +4261,24 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &9215073005994342925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424602591147918604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26328aa1bdb5a40c7bd03dae4f10517f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UI.HealthBarPresenter
+  anchor: {fileID: 2814510709326387004}
+  worldHeightOffset: 0
+  referenceDistance: 10
+  minScale: 0.4
+  maxScale: 1.2
+  hideDelayOnDeath: 2
 --- !u!1 &6574362971524931523
 GameObject:
   m_ObjectHideFlags: 0
@@ -5910,6 +5962,37 @@ Transform:
   m_Children:
   - {fileID: 4038525390502770907}
   m_Father: {fileID: 1099954643230443949}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &9053111793862816112
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2814510709326387004}
+  m_Layer: 0
+  m_Name: HealthBarAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2814510709326387004
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9053111793862816112}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4673849608464633276}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9084540966899210932
 GameObject:

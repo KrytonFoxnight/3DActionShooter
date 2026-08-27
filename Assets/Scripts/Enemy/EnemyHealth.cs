@@ -8,12 +8,12 @@ namespace Enemy
     {
         [SerializeField] private int maxHp = 100;
 
-        private EnemyState _state;
-        private Health _health;
-
+        public Health Model { get; private set; }
         private bool _initialized;
 
-        public bool IsDepleted => _health.IsDepleted;
+        public bool IsDepleted => Model.IsDepleted;
+
+        private EnemyState _state;
 
         #region Lifecycle
 
@@ -25,7 +25,7 @@ namespace Enemy
             if (!state) return false;
 
             _state = state;
-            _health = new Health(maxHp);
+            Model = new Health(maxHp);
             _initialized = true;
 
             return true;
@@ -40,12 +40,12 @@ namespace Enemy
 
         public void TakeDamage(int amount)
         {
-            var applied = _health.ApplyDamage(amount);
+            var applied = Model.ApplyDamage(amount);
             if (applied <= 0) return;
 
             Debug.Log($"Enemy took {applied} damage");
 
-            if (_health.IsDepleted) return;
+            if (Model.IsDepleted) return;
 
             _state.ReceiveDamage();
         }
