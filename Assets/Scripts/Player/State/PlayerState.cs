@@ -1,5 +1,6 @@
 using System;
 using Player.Animation;
+using UI.HealthBarUI.PlayerUI.NearestEnemyHpBar;
 using UnityEngine;
 
 namespace Player.State
@@ -11,6 +12,8 @@ namespace Player.State
         [SerializeField] private PlayerMovement movement;
         [SerializeField] private PlayerMeleeAttack meleeAttack;
         [SerializeField] private NearestEnemyScanner nearestEnemyScanner;
+
+        [SerializeField] private NearestEnemyHpBarView nearestEnemyHpBarView;
 
         [SerializeField] private float hitReactionCooldown = 1.2f;
 

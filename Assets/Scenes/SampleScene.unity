@@ -521,6 +521,119 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &881319636
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1466900461}
+    m_Modifications:
+    - target: {fileID: 1113530559783550293, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+      propertyPath: m_Name
+      value: NearestEnemyHpBar
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926156054792770323, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926156054792770323, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926156054792770323, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926156054792770323, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926156054792770323, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926156054792770323, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926156054792770323, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 111.1444
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926156054792770323, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 49.9893
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926156054792770323, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926156054792770323, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926156054792770323, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -31
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926156054792770323, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926156054792770323, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926156054792770323, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926156054792770323, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926156054792770323, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926156054792770323, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926156054792770323, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926156054792770323, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926156054792770323, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+--- !u!224 &881319637 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 4926156054792770323, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+  m_PrefabInstance: {fileID: 881319636}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &881319638 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2239405494673100820, guid: 6f83bc52711ff4c04a8eae9f45bfd4ba, type: 3}
+  m_PrefabInstance: {fileID: 881319636}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46f004ecfeac4efb979ee1c2cce27e26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UI.HealthBarUI.PlayerUI.NearestEnemyHpBar.NearestEnemyHpBarView
 --- !u!4 &1006912093 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4603156116648498359, guid: fc5a676d2c90b3d4f8a22e369c35950d, type: 3}
@@ -650,7 +763,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 881319637}
   m_Father: {fileID: 1316604440}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -716,7 +830,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -735,6 +849,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UI.HealthBarCanvas
   canvas: {fileID: 1466900464}
   viewPrefab: {fileID: 7279105448035071515, guid: 77c0b694f0f8f49abbf1f32e3adf5cb4, type: 3}
+  trimEnabled: 1
   trimInterval: 10
   maxIdleCount: 8
 --- !u!1001 &1553952535
@@ -1119,6 +1234,10 @@ PrefabInstance:
       propertyPath: cameraTransform
       value: 
       objectReference: {fileID: 330585546}
+    - target: {fileID: 5300120604579693176, guid: b6af5738aa537fe41b22c8c0920b2c3a, type: 3}
+      propertyPath: nearestEnemyHpBarView
+      value: 
+      objectReference: {fileID: 881319638}
     - target: {fileID: 6424602591147918604, guid: b6af5738aa537fe41b22c8c0920b2c3a, type: 3}
       propertyPath: m_Name
       value: Player

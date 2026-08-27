@@ -1,20 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace UI.HealthBarUI
+namespace UI.HealthBarUI.EnemyUI.EnemyHpBar
 {
-    public class HealthBarRoot : MonoBehaviour
+    public class EnemyHpBarRoot : MonoBehaviour
     {
         [SerializeField] private Canvas canvas;
-        [SerializeField] private HealthBarView viewPrefab;
+        [SerializeField] private EnemyHpBarView viewPrefab;
 
         [Header("Trim")]
         [SerializeField] private bool trimEnabled = true;
         [SerializeField] private float trimInterval = 10f;
         [SerializeField] private int maxIdleCount = 8;
 
-        private List<HealthBarView> _stocks = new List<HealthBarView>();
-        private List<HealthBarView> _borrows = new List<HealthBarView>();
+        private List<EnemyHpBarView> _stocks = new List<EnemyHpBarView>();
+        private List<EnemyHpBarView> _borrows = new List<EnemyHpBarView>();
 
         private float _nextTrimTime;
 
@@ -28,7 +28,7 @@ namespace UI.HealthBarUI
             Trim();
         }
 
-        public HealthBarView GetHealthBarView()
+        public EnemyHpBarView GetEnemyHpBarView()
         {
             var view = Rent() ?? Create();
             if (!view) return null;
@@ -41,7 +41,7 @@ namespace UI.HealthBarUI
             return view;
         }
 
-        public void ReturnHealthBarView(HealthBarView view)
+        public void ReturnEnemyHpBarView(EnemyHpBarView view)
         {
             if (!view) return;
             if (!_borrows.Remove(view)) return;
@@ -62,14 +62,14 @@ namespace UI.HealthBarUI
             }
         }
 
-        private HealthBarView Create()
+        private EnemyHpBarView Create()
         {
             if (!viewPrefab || !canvas) return null;
 
             return Instantiate(viewPrefab, canvas.transform);
         }
 
-        private HealthBarView Rent()
+        private EnemyHpBarView Rent()
         {
             var last = _stocks.Count - 1;
             if (last < 0) return null;

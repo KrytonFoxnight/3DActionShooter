@@ -2,9 +2,9 @@
 using Combat;
 using UnityEngine;
 
-namespace UI.HealthBarUI
+namespace UI.HealthBarUI.EnemyUI.EnemyHpBar
 {
-    public class HealthBarPresenter : MonoBehaviour
+    public class EnemyHpBarPresenter : MonoBehaviour
     {
         [Header("Tracking")]
         [SerializeField] private Transform anchor = null!;
@@ -19,8 +19,8 @@ namespace UI.HealthBarUI
         [SerializeField] private float hideDelayOnDeath = 2f;
 
         private Health _health = null!;
-        private HealthBarRoot _root = null!;
-        private HealthBarView _view = null!;
+        private EnemyHpBarRoot _root = null!;
+        private EnemyHpBarView _view = null!;
         private Camera _camera = null!;
 
         private float? _hideAt;
@@ -39,10 +39,10 @@ namespace UI.HealthBarUI
             var mainCamera = Camera.main;
             if (!mainCamera) return false;
 
-            var root = FindFirstObjectByType<HealthBarRoot>();
+            var root = FindFirstObjectByType<EnemyHpBarRoot>();
             if (!root) return false;
 
-            _view = root.GetHealthBarView();
+            _view = root.GetEnemyHpBarView();
             if (!_view) return false;
 
             _root = root;
@@ -59,7 +59,7 @@ namespace UI.HealthBarUI
         public void Dispose()
         {
             _health.Changed -= Refresh;
-            if (_root) _root.ReturnHealthBarView(_view);
+            if (_root) _root.ReturnEnemyHpBarView(_view);
 
             _root = null!;
             _view = null!;

@@ -2,7 +2,7 @@ using System;
 using Enemy.AI;
 using Enemy.Animation;
 using Enemy.Movement;
-using UI.HealthBarUI;
+using UI.HealthBarUI.EnemyUI.EnemyHpBar;
 using UnityEngine;
 
 namespace Enemy.State
@@ -14,7 +14,7 @@ namespace Enemy.State
         [SerializeField] private EnemyMovement movement;
         [SerializeField] private EnemyMeleeAttack meleeAttack;
         [SerializeField] private EnemyAI ai;
-        [SerializeField] private HealthBarPresenter healthBarPresenter;
+        [SerializeField] private EnemyHpBarPresenter healthBarPresenter;
 
         [SerializeField] private float hitReactionCooldown = 1.2f;
 
