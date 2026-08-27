@@ -1,3 +1,4 @@
+using Core;
 using UnityEngine;
 
 namespace Combat
@@ -27,7 +28,7 @@ namespace Combat
 
         private void OnValidate()
         {
-            if(hitImpactDelay > attackInterval) Debug.LogWarning($"{name}: 데미지 반영까지의 대기 시간이 공격 속도보다 깁니다. 실제 공격 주기가 hitImpactDelay로 동작합니다.", this);
+            if(hitImpactDelay > attackInterval) LogManager.LogWarning($"{name}: 데미지 반영까지의 대기 시간이 공격 속도보다 깁니다. 실제 공격 주기가 hitImpactDelay로 동작합니다.", this);
         }
 
         // Getters

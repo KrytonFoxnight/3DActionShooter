@@ -1,4 +1,5 @@
 using System;
+using Core;
 using TrainingDummy.AI;
 using TrainingDummy.Animation;
 using TrainingDummy.State;
@@ -58,7 +59,14 @@ namespace TrainingDummy
 
             var result = animationHandlerResult && healthInitResult && meleeAttackInitResult && aiInitResult;
 
-            if (!result) Debug.LogError("TrainingDummy Init Failed", this);
+            if (!result)
+            {
+                LogManager.LogError("TrainingDummy Init Failed\n" +
+                                    $"animationHandler: {animationHandlerResult}\n" +
+                                    $"health: {healthInitResult}\n" +
+                                    $"meleeAttack: {meleeAttackInitResult}\n" +
+                                    $"ai: {aiInitResult}", this);
+            }
 
             return result;
         }

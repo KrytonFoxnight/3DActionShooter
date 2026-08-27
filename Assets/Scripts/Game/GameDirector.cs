@@ -1,3 +1,4 @@
+using Core;
 using Enemy.Spawn;
 using UnityEngine;
 
@@ -27,7 +28,7 @@ namespace Game
 
             if (!spawnerInitResult)
             {
-                Debug.LogError("GameDirector Init Failed", this);
+                LogManager.LogError("GameDirector Init Failed", this);
 
                 return false;
             }

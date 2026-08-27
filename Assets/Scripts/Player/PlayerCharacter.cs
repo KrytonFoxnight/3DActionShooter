@@ -1,4 +1,5 @@
 using System;
+using Core;
 using Player.Animation;
 using Player.State;
 using UI.HealthBarUI.PlayerUI.NearestEnemyHpBar;
@@ -70,7 +71,16 @@ namespace Player
             var result = animationHandlerResult && healthInitResult && movementInitResult && meleeAttackInitResult &&
                          nearestEnemyDetectorResult && nearestEnemyHpBarResult;
 
-            if (!result) Debug.LogError("Player Init Failed", this);
+            if (!result)
+            {
+                LogManager.LogError("Player Init Failed\n" +
+                                    $"animationHandler: {animationHandlerResult}\n" +
+                                    $"health: {healthInitResult}\n" +
+                                    $"movement: {movementInitResult}\n" +
+                                    $"meleeAttack: {meleeAttackInitResult}\n" +
+                                    $"nearestEnemyScanner: {nearestEnemyDetectorResult}\n" +
+                                    $"nearestEnemyHpBarPresenter: {nearestEnemyHpBarResult}", this);
+            }
 
             return result;
         }

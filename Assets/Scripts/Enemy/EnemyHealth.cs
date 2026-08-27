@@ -1,4 +1,5 @@
 using Combat;
+using Core;
 using Enemy.State;
 using UnityEngine;
 
@@ -43,7 +44,7 @@ namespace Enemy
             var applied = Model.ApplyDamage(amount);
             if (applied <= 0) return;
 
-            Debug.Log($"Enemy took {applied} damage");
+            LogManager.Log($"Enemy took {applied} damage");
 
             if (Model.IsDepleted) return;
 

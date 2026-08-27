@@ -1,4 +1,5 @@
 using Combat;
+using Core;
 using TrainingDummy.State;
 using UnityEngine;
 
@@ -43,7 +44,7 @@ namespace TrainingDummy
             var applied = _health.ApplyDamage(amount);
             if (applied <= 0) return;
 
-            Debug.Log($"Applied damage: {applied}");
+            LogManager.Log($"Applied damage: {applied}");
 
             if (_health.IsDepleted) return;
 

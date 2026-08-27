@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Core;
 using UnityEngine;
 
 namespace Enemy.Spawn
@@ -20,7 +21,7 @@ namespace Enemy.Spawn
             {
                 if (spawnPoints[i]) continue;
 
-                Debug.LogError($"Spawn Point Is Missing At Index {i}", this);
+                LogManager.LogError($"Spawn Point Is Missing At Index {i}", this);
 
                 return false;
             }
