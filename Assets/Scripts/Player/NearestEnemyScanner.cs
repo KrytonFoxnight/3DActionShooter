@@ -114,7 +114,7 @@ namespace Player
 
             NearestHealth = _nearestEnemyHealth ? _nearestEnemyHealth.Model : null;
             NearestDisplayName = _nearestEnemyHealth &&
-                                 _nearestEnemyHealth.TryGetComponent<EnemyState>(out var state)
+                                 _nearestEnemyHealth.TryGetComponent<EnemyCharacter>(out var state)
                 ? state.DisplayName
                 : string.Empty;
         }

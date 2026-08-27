@@ -1,11 +1,12 @@
 using System;
 using Player.Animation;
+using Player.State;
 using UI.HealthBarUI.PlayerUI.NearestEnemyHpBar;
 using UnityEngine;
 
-namespace Player.State
+namespace Player
 {
-    public class PlayerState : MonoBehaviour
+    public class PlayerCharacter : MonoBehaviour
     {
         [SerializeField] private PlayerAnimationHandler animationHandler;
         [SerializeField] private PlayerHealth health;

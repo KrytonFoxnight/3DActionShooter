@@ -12,7 +12,7 @@ namespace Enemy
         [SerializeField] private EnemyAnimationHandler animationHandler;
         [SerializeField] private AttackConfig attackConfig;
 
-        private EnemyState _state;
+        private EnemyCharacter _character;
         private Coroutine _pendingHit;
 
         private bool _initialized;
@@ -22,16 +22,16 @@ namespace Enemy
 
         public bool IsInitialized => _initialized;
 
-        public bool Init(EnemyState state)
+        public bool Init(EnemyCharacter character)
         {
             if (_initialized) return true;
-            if (!state) return false;
+            if (!character) return false;
             if (!animationHandler || !attackConfig) return false;
 
-            _state = state;
+            _character = character;
 
-            _state.Damaged += OnDamaged;
-            _state.Died += OnDeath;
+            _character.Damaged += OnDamaged;
+            _character.Died += OnDeath;
 
             _initialized = true;
             return true;
@@ -39,10 +39,10 @@ namespace Enemy
 
         public void Dispose()
         {
-            if (_state != null)
+            if (_character != null)
             {
-                _state.Damaged -= OnDamaged;
-                _state.Died -= OnDeath;
+                _character.Damaged -= OnDamaged;
+                _character.Died -= OnDeath;
             }
 
             CancelPendingHit();

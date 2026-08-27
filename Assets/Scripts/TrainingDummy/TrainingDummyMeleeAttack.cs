@@ -17,7 +17,7 @@ namespace TrainingDummy
         [SerializeField] private AttackConfig attackConfig;
 
 
-        private TrainingDummyState _state;
+        private TrainingDummyCharacter _character;
         private Coroutine _pendingHit;
 
         private bool _initialized;
@@ -27,16 +27,16 @@ namespace TrainingDummy
 
         public bool IsInitialized => _initialized;
 
-        public bool Init(TrainingDummyState state)
+        public bool Init(TrainingDummyCharacter character)
         {
             if (_initialized) return true;      // 이미 초기화된 것은 실패가 아니다
-            if (!state) return false;
+            if (!character) return false;
             if (!animationHandler || !attackConfig) return false;
 
-            _state = state;
+            _character = character;
 
-            _state.Damaged += OnDamaged;
-            _state.Died += OnDeath;
+            _character.Damaged += OnDamaged;
+            _character.Died += OnDeath;
 
             _initialized = true;
             return true;
@@ -44,10 +44,10 @@ namespace TrainingDummy
 
         public void Dispose()
         {
-            if (_state != null)
+            if (_character != null)
             {
-                _state.Damaged -= OnDamaged;
-                _state.Died -= OnDeath;
+                _character.Damaged -= OnDamaged;
+                _character.Died -= OnDeath;
             }
 
             CancelPendingHit();     // 잔여 공격 처리 정리
