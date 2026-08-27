@@ -100,6 +100,8 @@ namespace TrainingDummy
             switch (next)
             {
                 case TrainingDummyStateType.Dead:
+                    animationHandler.ResetTrigger(TrainingDummyAnimationStatus.Attack);
+                    animationHandler.ResetTrigger(TrainingDummyAnimationStatus.GetHit);
                     animationHandler.SetTrigger(TrainingDummyAnimationStatus.Death);
                     Died?.Invoke();
                     break;

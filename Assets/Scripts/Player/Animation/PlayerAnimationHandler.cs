@@ -8,6 +8,8 @@ namespace Player.Animation
 
         public void SetTrigger(PlayerAnimationStatus status) => animator.SetTrigger(status.GetAnimatorHash());
 
+        public void ResetTrigger(PlayerAnimationStatus status) => animator.ResetTrigger(status.GetAnimatorHash());
+
         public void SetBool(PlayerAnimationStatus status, bool value) => animator.SetBool(status.GetAnimatorHash(), value);
 
         public void SetFloat(PlayerAnimationStatus status, float value) => animator.SetFloat(status.GetAnimatorHash(), value);
