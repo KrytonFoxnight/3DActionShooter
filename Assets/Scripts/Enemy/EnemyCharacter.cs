@@ -92,6 +92,13 @@ namespace Enemy
             if (IsActionAllowed) ai.Tick();
         }
 
+        public void SetTarget(Transform target)
+        {
+            if (ai == null) return;
+
+            ai.SetTarget(target);
+        }
+
         public void ReceiveDamage()
         {
             movement.ApplyHitStun();
