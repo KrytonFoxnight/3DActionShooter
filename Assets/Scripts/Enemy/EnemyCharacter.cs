@@ -1,4 +1,5 @@
 using System;
+using Core;
 using Enemy.AI;
 using Enemy.Animation;
 using Enemy.Movement;
@@ -74,7 +75,16 @@ namespace Enemy
             var result = animationHandlerResult && healthInitResult && movementInitResult && meleeAttackInitResult &&
                          aiInitResult && healthBarInitResult;
 
-            if (!result) Debug.LogError("Enemy Init Failed", this);
+            if (!result)
+            {
+                LogManager.LogError("Enemy Init Failed\n" +
+                                    $"animationHandler: {animationHandlerResult}\n" +
+                                    $"health: {healthInitResult}\n" +
+                                    $"movement: {movementInitResult}\n" +
+                                    $"meleeAttack: {meleeAttackInitResult}\n" +
+                                    $"ai: {aiInitResult}\n" +
+                                    $"healthBarPresenter: {healthBarInitResult}", this);
+            }
 
             return result;
         }

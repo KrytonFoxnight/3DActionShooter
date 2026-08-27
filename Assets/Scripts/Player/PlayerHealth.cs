@@ -1,4 +1,5 @@
 using Combat;
+using Core;
 using Player.State;
 using UnityEngine;
 
@@ -44,7 +45,7 @@ namespace Player
             var applied = _health.ApplyDamage(amount);
             if (applied <= 0) return;   // 적용된 데미지가 없는 경우
 
-            Debug.Log($"Player took {applied} damage");
+            LogManager.Log($"Player took {applied} damage");
 
             if (_health.IsDepleted) return;
 

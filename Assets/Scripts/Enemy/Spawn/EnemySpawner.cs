@@ -1,5 +1,6 @@
 #nullable enable
 using System.Collections.Generic;
+using Core;
 using UnityEngine;
 
 namespace Enemy.Spawn
@@ -45,7 +46,7 @@ namespace Enemy.Spawn
 
             if (count > pointCount)
             {
-                Debug.LogWarning($"Spawn Count {count} Exceeds Spawn Point Count {pointCount}", this);
+                LogManager.LogWarning($"Spawn Count {count} Exceeds Spawn Point Count {pointCount}", this);
 
                 count = pointCount;
             }
@@ -77,7 +78,7 @@ namespace Enemy.Spawn
 
             if (!point.TryGetSpawnPose(out position, out rotation))
             {
-                Debug.LogWarning($"Spawn Point Is Not On NavMesh: {point.name}", point);
+                LogManager.LogWarning($"Spawn Point Is Not On NavMesh: {point.name}", point);
 
                 return false;
             }
