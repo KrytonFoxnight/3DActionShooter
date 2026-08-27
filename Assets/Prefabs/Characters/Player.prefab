@@ -4038,6 +4038,7 @@ GameObject:
   - component: {fileID: 7965625255088148218}
   - component: {fileID: 4415165403767109555}
   - component: {fileID: 2291464293797136917}
+  - component: {fileID: 4676506921555866841}
   - component: {fileID: 3809796566830955320}
   - component: {fileID: 1936441045532867387}
   m_Layer: 6
@@ -4081,6 +4082,7 @@ MonoBehaviour:
   health: {fileID: 2291464293797136917}
   movement: {fileID: 4415165403767109555}
   meleeAttack: {fileID: 7965625255088148218}
+  nearestEnemyScanner: {fileID: 4676506921555866841}
   hitReactionCooldown: 1.2
 --- !u!114 &1013046420389809324
 MonoBehaviour:
@@ -4163,6 +4165,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerHealth
   maxHp: 100
+--- !u!114 &4676506921555866841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6424602591147918604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c84ae5ad543049e7a60b2488d3662b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.NearestEnemyScanner
+  characterTransform: {fileID: 1077758583369168451}
+  scanRange: 8
+  scanInterval: 0.25
 --- !u!95 &3809796566830955320
 Animator:
   serializedVersion: 7

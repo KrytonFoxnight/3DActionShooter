@@ -10,6 +10,7 @@ namespace Player.State
         [SerializeField] private PlayerHealth health;
         [SerializeField] private PlayerMovement movement;
         [SerializeField] private PlayerMeleeAttack meleeAttack;
+        [SerializeField] private NearestEnemyScanner nearestEnemyScanner;
 
         [SerializeField] private float hitReactionCooldown = 1.2f;
 
@@ -28,7 +29,8 @@ namespace Player.State
             animationHandler != null &&
             health != null && health.IsInitialized &&
             movement != null && movement.IsInitialized &&
-            meleeAttack != null && meleeAttack.IsInitialized;
+            meleeAttack != null && meleeAttack.IsInitialized &&
+            nearestEnemyScanner != null && nearestEnemyScanner.IsInitialized;
 
         private void Awake()
         {
@@ -52,7 +54,10 @@ namespace Player.State
             var movementInitResult = movement != null && movement.Init();
             var meleeAttackInitResult = meleeAttack != null && meleeAttack.Init(this);
 
-            var result = animationHandlerResult && healthInitResult && movementInitResult && meleeAttackInitResult;
+            var nearestEnemyDetectorResult = nearestEnemyScanner != null && nearestEnemyScanner.Init();
+
+            var result = animationHandlerResult && healthInitResult && movementInitResult && meleeAttackInitResult &&
+                         nearestEnemyDetectorResult;
 
             if (!result) Debug.LogError("Player Init Failed", this);
 
@@ -68,6 +73,7 @@ namespace Player.State
             }
 
             movement.Tick();
+            nearestEnemyScanner.Tick();
 
             if (IsActionAllowed) meleeAttack.Tick();
         }
@@ -108,6 +114,7 @@ namespace Player.State
 
         private void Dispose()
         {
+            if (nearestEnemyScanner != null && nearestEnemyScanner.IsInitialized) nearestEnemyScanner.Dispose();
             if (meleeAttack != null && meleeAttack.IsInitialized) meleeAttack.Dispose();
             if (movement != null && movement.IsInitialized) movement.Dispose();
             if (health != null && health.IsInitialized) health.Dispose();
