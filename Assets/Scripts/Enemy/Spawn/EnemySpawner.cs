@@ -1,7 +1,6 @@
 #nullable enable
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace Enemy.Spawn
 {
@@ -9,7 +8,6 @@ namespace Enemy.Spawn
     {
         [SerializeField] private EnemySpawnPointProvider spawnPointProvider = null!;
 
-        [SerializeField] private float navMeshSampleDistance = 2f;
 
         private int? _nextPointIndex;
 
@@ -67,17 +65,15 @@ namespace Enemy.Spawn
 
             if (!point) return false;
 
-            if (!NavMesh.SamplePosition(point.Position, out var hit, navMeshSampleDistance, NavMesh.AllAreas))
+            if (!point.TryGetSpawnPose(out position, out rotation))
             {
                 Debug.LogWarning($"Spawn Point Is Not On NavMesh: {point.name}", point);
 
                 return false;
             }
 
-            position = hit.position;
-            rotation = point.Rotation;
-
             return true;
         }
+
     }
 }
