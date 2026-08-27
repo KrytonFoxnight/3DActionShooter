@@ -126,6 +126,8 @@ namespace Enemy
                     healthBarPresenter.HideAfterDelay();
                     movement.Halt();
                     animationHandler.SetFloat(EnemyAnimationStatus.MoveSpeed, 0f);
+                    animationHandler.ResetTrigger(EnemyAnimationStatus.GetHit);
+                    animationHandler.ResetTrigger(EnemyAnimationStatus.Attack);
                     animationHandler.SetTrigger(EnemyAnimationStatus.Death);
                     Died?.Invoke();
                     break;

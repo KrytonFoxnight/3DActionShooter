@@ -114,6 +114,10 @@ namespace Player
             switch (next)
             {
                 case PlayerStateType.Dead:
+                    animationHandler.ResetTrigger(PlayerAnimationStatus.Attack);
+                    animationHandler.ResetTrigger(PlayerAnimationStatus.GetHit);
+                    animationHandler.ResetTrigger(PlayerAnimationStatus.Dash);
+                    animationHandler.ResetTrigger(PlayerAnimationStatus.Jump);
                     animationHandler.SetTrigger(PlayerAnimationStatus.Death);
                     Died?.Invoke();
                     break;

@@ -7,5 +7,7 @@ namespace TrainingDummy.Animation
         [SerializeField] private Animator animator;
 
         public void SetTrigger(TrainingDummyAnimationStatus status) => animator.SetTrigger(status.GetAnimatorHash());
+
+        public void ResetTrigger(TrainingDummyAnimationStatus status) => animator.ResetTrigger(status.GetAnimatorHash());
     }
 }
