@@ -40,7 +40,17 @@ namespace Enemy.Spawn
 
             if (!IsInitialized || !request.IsValid) return spawned;
 
-            for (var i = 0; i < request.Count; i++)
+            var count = request.Count;
+            var pointCount = spawnPointProvider.Points.Count;
+
+            if (count > pointCount)
+            {
+                Debug.LogWarning($"Spawn Count {count} Exceeds Spawn Point Count {pointCount}", this);
+
+                count = pointCount;
+            }
+
+            for (var i = 0; i < count; i++)
             {
                 if (!TryResolveSpawnPose(out var position, out var rotation)) continue;
 
