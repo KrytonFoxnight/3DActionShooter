@@ -1,17 +1,25 @@
 using System;
 using Player.Animation;
+using Player.State;
+using UI.HealthBarUI.PlayerUI.NearestEnemyHpBar;
 using UnityEngine;
 
-namespace Player.State
+namespace Player
 {
-    public class PlayerState : MonoBehaviour
+    public class PlayerCharacter : MonoBehaviour
     {
         [SerializeField] private PlayerAnimationHandler animationHandler;
         [SerializeField] private PlayerHealth health;
         [SerializeField] private PlayerMovement movement;
         [SerializeField] private PlayerMeleeAttack meleeAttack;
+        [SerializeField] private NearestEnemyScanner nearestEnemyScanner;
+
+        [SerializeField] private NearestEnemyHpBarPresenter nearestEnemyHpBarPresenter;
 
         [SerializeField] private float hitReactionCooldown = 1.2f;
+
+        [Header("Debug")]
+        [SerializeField] private bool invincible;
 
         public event Action Damaged;
         public event Action Died;
@@ -22,13 +30,17 @@ namespace Player.State
 
         public bool IsAlive => _state == PlayerStateType.Alive;
 
+        public bool IsInvincible => invincible;
+
         private bool IsActionAllowed => IsAlive && !movement.IsInHitStun && !movement.IsControlLocked;
 
         private bool IsReady =>
             animationHandler != null &&
             health != null && health.IsInitialized &&
             movement != null && movement.IsInitialized &&
-            meleeAttack != null && meleeAttack.IsInitialized;
+            meleeAttack != null && meleeAttack.IsInitialized &&
+            nearestEnemyScanner != null && nearestEnemyScanner.IsInitialized &&
+            nearestEnemyHpBarPresenter != null && nearestEnemyHpBarPresenter.IsInitialized;
 
         private void Awake()
         {
@@ -52,7 +64,11 @@ namespace Player.State
             var movementInitResult = movement != null && movement.Init();
             var meleeAttackInitResult = meleeAttack != null && meleeAttack.Init(this);
 
-            var result = animationHandlerResult && healthInitResult && movementInitResult && meleeAttackInitResult;
+            var nearestEnemyDetectorResult = nearestEnemyScanner != null && nearestEnemyScanner.Init();
+            var nearestEnemyHpBarResult = nearestEnemyHpBarPresenter != null && nearestEnemyHpBarPresenter.Init();
+
+            var result = animationHandlerResult && healthInitResult && movementInitResult && meleeAttackInitResult &&
+                         nearestEnemyDetectorResult && nearestEnemyHpBarResult;
 
             if (!result) Debug.LogError("Player Init Failed", this);
 
@@ -68,6 +84,8 @@ namespace Player.State
             }
 
             movement.Tick();
+            nearestEnemyScanner.Tick();
+            nearestEnemyHpBarPresenter.SetTarget(nearestEnemyScanner.NearestHealth, nearestEnemyScanner.NearestDisplayName);
 
             if (IsActionAllowed) meleeAttack.Tick();
         }
@@ -96,6 +114,10 @@ namespace Player.State
             switch (next)
             {
                 case PlayerStateType.Dead:
+                    animationHandler.ResetTrigger(PlayerAnimationStatus.Attack);
+                    animationHandler.ResetTrigger(PlayerAnimationStatus.GetHit);
+                    animationHandler.ResetTrigger(PlayerAnimationStatus.Dash);
+                    animationHandler.ResetTrigger(PlayerAnimationStatus.Jump);
                     animationHandler.SetTrigger(PlayerAnimationStatus.Death);
                     Died?.Invoke();
                     break;
@@ -108,6 +130,8 @@ namespace Player.State
 
         private void Dispose()
         {
+            if (nearestEnemyScanner != null && nearestEnemyScanner.IsInitialized) nearestEnemyScanner.Dispose();
+            if (nearestEnemyHpBarPresenter != null && nearestEnemyHpBarPresenter.IsInitialized) nearestEnemyHpBarPresenter.Dispose();
             if (meleeAttack != null && meleeAttack.IsInitialized) meleeAttack.Dispose();
             if (movement != null && movement.IsInitialized) movement.Dispose();
             if (health != null && health.IsInitialized) health.Dispose();

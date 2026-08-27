@@ -19,7 +19,7 @@ namespace Player
 
         private bool _initialized;
 
-        private PlayerState _state;
+        private PlayerCharacter _character;
         private Coroutine _pendingHit;
 
         // 남은 시간을 감산하지 않고 "언제부터 가능한가"를 기록한다.
@@ -33,16 +33,16 @@ namespace Player
 
         public bool IsInitialized => _initialized;
 
-        public bool Init(PlayerState state)
+        public bool Init(PlayerCharacter character)
         {
             if(_initialized) return true;       // 이미 초기화된 것은 실패가 아니다
-            if (!state) return false;
+            if (!character) return false;
             if (!animationHandler || !inputReader || !attackConfig) return false;
 
-            _state = state;
+            _character = character;
 
-            _state.Damaged += OnDamaged;
-            _state.Died += OnDeath;
+            _character.Damaged += OnDamaged;
+            _character.Died += OnDeath;
 
             _initialized = true;
 
@@ -62,10 +62,10 @@ namespace Player
 
         public void Dispose()
         {
-            if (_state != null)
+            if (_character != null)
             {
-                _state.Damaged -= OnDamaged;
-                _state.Died -= OnDeath;
+                _character.Damaged -= OnDamaged;
+                _character.Died -= OnDeath;
             }
 
             CancelPendingHit();     // 잔여 공격 처리 정리

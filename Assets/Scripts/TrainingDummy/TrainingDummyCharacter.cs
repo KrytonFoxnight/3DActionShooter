@@ -1,11 +1,12 @@
 using System;
 using TrainingDummy.AI;
 using TrainingDummy.Animation;
+using TrainingDummy.State;
 using UnityEngine;
 
-namespace TrainingDummy.State
+namespace TrainingDummy
 {
-    public class TrainingDummyState : MonoBehaviour
+    public class TrainingDummyCharacter : MonoBehaviour
     {
         [SerializeField] private TrainingDummyAnimationHandler animationHandler;
         [SerializeField] private TrainingDummyHealth health;
@@ -99,6 +100,8 @@ namespace TrainingDummy.State
             switch (next)
             {
                 case TrainingDummyStateType.Dead:
+                    animationHandler.ResetTrigger(TrainingDummyAnimationStatus.Attack);
+                    animationHandler.ResetTrigger(TrainingDummyAnimationStatus.GetHit);
                     animationHandler.SetTrigger(TrainingDummyAnimationStatus.Death);
                     Died?.Invoke();
                     break;

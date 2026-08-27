@@ -8,7 +8,7 @@ namespace TrainingDummy
     {
         [SerializeField] private int maxHp = 100;
 
-        private TrainingDummyState _state;
+        private TrainingDummyCharacter _character;
         private Health _health;
 
         private bool _initialized;
@@ -19,12 +19,12 @@ namespace TrainingDummy
 
         public bool IsInitialized => _initialized;
 
-        public bool Init(TrainingDummyState state)
+        public bool Init(TrainingDummyCharacter character)
         {
             if (_initialized) return true;      // 이미 초기화된 것은 실패가 아닌 것으로 처리, 다만 필요시 Enum 전환으로 상세하게 변경할 수 있음
-            if (!state) return false;
+            if (!character) return false;
 
-            _state = state;
+            _character = character;
             _health = new Health(maxHp);
             _initialized = true;
 
@@ -47,7 +47,7 @@ namespace TrainingDummy
 
             if (_health.IsDepleted) return;
 
-            _state.ReceiveDamage();
+            _character.ReceiveDamage();
         }
     }
 }
