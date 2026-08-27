@@ -8,7 +8,7 @@ namespace Player
     {
         [SerializeField] private int maxHp = 100;
 
-        private PlayerState _state;
+        private PlayerCharacter _character;
         private Health _health;
         private bool _initialized;
 
@@ -18,12 +18,12 @@ namespace Player
 
         public bool IsInitialized => _initialized;
 
-        public bool Init(PlayerState state)
+        public bool Init(PlayerCharacter character)
         {
             if (_initialized) return true;      // 이미 초기화된 것은 실패가 아니다
-            if (!state) return false;
+            if (!character) return false;
 
-            _state = state;
+            _character = character;
             _health = new Health(maxHp);
             _initialized = true;
 
@@ -46,7 +46,7 @@ namespace Player
 
             if (_health.IsDepleted) return;
 
-            _state.ReceiveDamage();
+            _character.ReceiveDamage();
         }
     }
 }

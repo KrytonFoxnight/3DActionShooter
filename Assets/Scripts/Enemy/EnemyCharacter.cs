@@ -2,12 +2,13 @@ using System;
 using Enemy.AI;
 using Enemy.Animation;
 using Enemy.Movement;
+using Enemy.State;
 using UI.HealthBarUI.EnemyUI.EnemyHpBar;
 using UnityEngine;
 
-namespace Enemy.State
+namespace Enemy
 {
-    public class EnemyState : MonoBehaviour
+    public class EnemyCharacter : MonoBehaviour
     {
         [SerializeField] private EnemyAnimationHandler animationHandler;
         [SerializeField] private EnemyHealth health;

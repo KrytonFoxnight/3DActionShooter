@@ -13,18 +13,18 @@ namespace Enemy
 
         public bool IsDepleted => Model.IsDepleted;
 
-        private EnemyState _state;
+        private EnemyCharacter _character;
 
         #region Lifecycle
 
         public bool IsInitialized => _initialized;
 
-        public bool Init(EnemyState state)
+        public bool Init(EnemyCharacter character)
         {
             if (_initialized) return true;
-            if (!state) return false;
+            if (!character) return false;
 
-            _state = state;
+            _character = character;
             Model = new Health(maxHp);
             _initialized = true;
 
@@ -47,7 +47,7 @@ namespace Enemy
 
             if (Model.IsDepleted) return;
 
-            _state.ReceiveDamage();
+            _character.ReceiveDamage();
         }
     }
 }
