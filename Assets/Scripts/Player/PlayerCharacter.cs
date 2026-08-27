@@ -18,6 +18,9 @@ namespace Player
 
         [SerializeField] private float hitReactionCooldown = 1.2f;
 
+        [Header("Debug")]
+        [SerializeField] private bool invincible;
+
         public event Action Damaged;
         public event Action Died;
 
@@ -26,6 +29,8 @@ namespace Player
         private float _hitReactionReadyTime;
 
         public bool IsAlive => _state == PlayerStateType.Alive;
+
+        public bool IsInvincible => invincible;
 
         private bool IsActionAllowed => IsAlive && !movement.IsInHitStun && !movement.IsControlLocked;
 

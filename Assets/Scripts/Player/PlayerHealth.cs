@@ -39,6 +39,8 @@ namespace Player
 
         public void TakeDamage(int amount)
         {
+            if (_character.IsInvincible) return;
+
             var applied = _health.ApplyDamage(amount);
             if (applied <= 0) return;   // 적용된 데미지가 없는 경우
 
