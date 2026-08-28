@@ -1,0 +1,56 @@
+# 웨이브 진행과 사망 적 정리 구조 결정
+
+- 채택 ①: 죽은 적의 파괴는 `EnemyCharacter` 자신이 사망 상태 진입 시 지연 예약한다.
+- 채택 ②: 전멸 판정은 `GameDirector`가 보유한 적 목록의 **재계산**으로 한다. 적의 `Died` 이벤트를 판정 근거로 쓰지 않는다.
+
+## 1. 현재 코드 상태
+
+죽은 적에 대한 별도의 파괴 처리를 하지 않음.
+
+## 2. 첫 번째 기능 구현: 사망한 적 인스턴스들 정리
+
+`EnemyCharacter.ChangeState(Dead)`(`:135`)에 `Destroy(gameObject, delay)`를 추가한다.
+
+- **위치.** `Character.cs` 계열 스크립트에서 상태 전이 관리를 해주고 있었으므로 해당 위치에 정리 코드를 추가한다. `ChangeState`의 재진입 가드(`:129`)가 중복 예약을 막아주므로 별도 플래그가 필요 없다.
+- **`delay`를 둔 이유.** 캐릭터의 사망 연출을 보여주기 위한 조치. `hideDelayOnDeath = 2f`(`EnemyHpBarPresenter.cs:19`)보다 커야 한다 — 더 작으면 체력바가 그 값이 아니라 파괴 시점에 사라져 설정 자체가 무의미해진다.
+- **굳이 파괴 완료까지 기다리지 않는 이유.** 연출을 위한 처리가 게임 로직의 진행을 막고 있으면 안 되기 때문. `hitImpactDelay`로 판정과 표현을 분리한 결정(`attack-timing-architecture-decision.md`)과 같은 원칙이다.
+
+레퍼런스도 유닛 자신이 파괴한다. Boss Room `ServerCharacter.cs:341`(3초 지연 후 Despawn), Chop Chop `DestroyEntitySO.OnStateEnter()`. 플레이어는 파괴하지 않는다.
+
+## 3. 두 번째 기능 구현: 전멸 판정
+
+```csharp
+_spawned.RemoveAll(e => !e || !e.IsAlive);
+//                      │      └ 판정 기준. 논리적 사망
+//                      └ 안전망. 사망 경로를 거치지 않고 사라진 참조 제거
+```
+
+**판정은 논리적 사망만 본다.** 오브젝트 수명(`Destroy`)은 판정에서 제외한다. 시체는 이미 `IsDepleted`가 true라 스캐너(`NearestEnemyScanner.cs:84`)와 AI(`EnemyCharacter.cs:94`의 조기 반환) 양쪽에서 배제되어 있다. 게임 상태에 영향이 없는 것의 소멸을 게임 상태 판정이 기다릴 이유가 없다.
+
+**다만 현재 `IsAlive`와 `IsDepleted`가 같은 질문에 답하는 공개 플래그로 공존한다.** 권한자인 `EnemyCharacter`가 원본(`IsDepleted`)을 읽는 것은 전이의 입력이므로 정당하나, 외부 소비처인 스캐너까지 원본을 보고 있다. 부활·무적처럼 둘이 갈라지는 규칙이 생기면 조용히 어긋나므로 **외부 소비처는 `IsAlive`로 통일한다.**
+
+**`Died` 이벤트 구독과 카운터 기반의 판정 로직을 기각한 이유**
+
+- list의 참조값을 SSOT로 삼는 것이, 굳이 이벤트 구독 및 카운터 레이어를 올릴 필요가 없다. 오히려 정보가 두 갈래로 관리되어서 혼동을 야기할 수 있다.
+- **판정에서만 빼며, 이벤트 자체는 기존 방식대로 남는다.** — `EnemyMeleeAttack.OnDeath`(`:79`)가 `CancelPendingHit()`을 호출해, `hitImpactDelay`로 예약된 타격이 휘두르는 도중 죽은 적에게서 나가지 않도록 정리함.
+- 놓치면 복구되지 않는 *사건*은 이벤트로 통지하고(`CancelPendingHit`), 언제든 다시 물을 수 있는 *상태*는 재계산으로 충분함.
+
+## 4. 웨이브 구성
+
+- **상태:** `enum` + `switch`로 5개를 둔다.
+
+```
+Idle ──▶ InProgress ──(전멸)──▶ Preparing ──▶ InProgress …
+            │                                   │
+            │ (플레이어 사망)              (배열 소진)
+            ▼                                   ▼
+          Failed                             Cleared
+```
+
+  플레이어 사망은 `InProgress`/`Preparing` 어느 상태에서든 `Failed`로 전이되도록 하여 처리함.
+
+- **스폰:** `InProgress` 안에서 비동기로 도는 **부차 단계**로 둔다. 순차 스폰과 등장 연출이 들어가게 되면, 어차피 여러 프레임에 걸치기 때문. 스폰이 끝나기 전에 `Count == 0`이 성립할 수 있으므로, 전멸 판정은 스폰 완료 여부를 함께 본다.
+- **패배:** `GameDirector`가 `PlayerCharacter.Died`를 구독하여 처리한다. 적과 달리 지금 기획에서 플레이어는 한 명뿐이고 사망은 놓치면 복구되지 않는 *사건*에 해당하므로 해당 방향성으로 간다.
+- **wave 데이터:** `GameDirector.initialEnemySpawn`(`:13`)을 `EnemySpawnRequest[] waves`로 교체한다. 구현 목적에 맞는 수준으로 단순하게 처리하고자 했음.
+- **로직 위치:** `GameDirector` 안에 둔다. 별도의 클래스로 분리할 필요성이 초기 단계인 지금 없기 때문. `Update()` 생명주기 메서드를 추가해서 여기서 판단하는 것으로 함.
+- **UI가 붙는다면** 재계산 결과가 바뀐 프레임에만 이벤트를 발행한다(`int` 비교로 엣지 검출). 판정과 표시가 같은 값을 읽으므로 이중 관리가 아니다.
