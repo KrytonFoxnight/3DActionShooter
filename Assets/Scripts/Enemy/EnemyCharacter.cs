@@ -22,6 +22,8 @@ namespace Enemy
 
         [SerializeField] private float hitReactionCooldown = 1.2f;
 
+        [SerializeField] private float destroyDelayOnDeath = 3f;
+
         public event Action Damaged;
         public event Action Died;
 
@@ -140,6 +142,7 @@ namespace Enemy
                     animationHandler.ResetTrigger(EnemyAnimationStatus.Attack);
                     animationHandler.SetTrigger(EnemyAnimationStatus.Death);
                     Died?.Invoke();
+                    Destroy(gameObject, destroyDelayOnDeath);
                     break;
                 case EnemyStateType.Alive:
                     break;
