@@ -163,8 +163,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68afcfff5f38147d88c8ad366580f405, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy.Spawn.EnemySpawnPoint
+  navMeshSampleDistance: 2
   showGizmo: 1
-  gizmoRadius: 0.5
   gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1 &330585543
 GameObject:
@@ -627,8 +627,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68afcfff5f38147d88c8ad366580f405, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy.Spawn.EnemySpawnPoint
+  navMeshSampleDistance: 2
   showGizmo: 1
-  gizmoRadius: 0.5
   gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1 &807293591
 GameObject:
@@ -979,8 +979,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68afcfff5f38147d88c8ad366580f405, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy.Spawn.EnemySpawnPoint
+  navMeshSampleDistance: 2
   showGizmo: 1
-  gizmoRadius: 0.5
   gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1 &1316604439
 GameObject:
@@ -1058,8 +1058,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68afcfff5f38147d88c8ad366580f405, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy.Spawn.EnemySpawnPoint
+  navMeshSampleDistance: 2
   showGizmo: 1
-  gizmoRadius: 0.5
   gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1 &1466900460
 GameObject:
@@ -1285,10 +1285,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.GameDirector
   enemySpawner: {fileID: 1671665313}
+  player: {fileID: 1808544377}
   enemyTarget: {fileID: 1579660498}
-  initialEnemySpawn:
-    enemy: {fileID: 1555060843833722079, guid: bf68a7a29cd844fcf8c850b1941eb9b2, type: 3}
-    count: 5
+  waves:
+  - enemy: {fileID: 1555060843833722079, guid: bf68a7a29cd844fcf8c850b1941eb9b2, type: 3}
+    count: 1
+  - enemy: {fileID: 1555060843833722079, guid: bf68a7a29cd844fcf8c850b1941eb9b2, type: 3}
+    count: 2
+  - enemy: {fileID: 1555060843833722079, guid: bf68a7a29cd844fcf8c850b1941eb9b2, type: 3}
+    count: 3
+  spawnInterval: 0.25
+  wavePrepareDuration: 3
 --- !u!4 &1671665312
 Transform:
   m_ObjectHideFlags: 0
@@ -1317,7 +1324,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy.Spawn.EnemySpawner
   spawnPointProvider: {fileID: 449267727}
-  navMeshSampleDistance: 2
+--- !u!114 &1808544377 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5300120604579693176, guid: b6af5738aa537fe41b22c8c0920b2c3a, type: 3}
+  m_PrefabInstance: {fileID: 4834949860371495356}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd03f865526c4096b1a619d8104c148a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.State.PlayerState
 --- !u!1 &1870643320
 GameObject:
   m_ObjectHideFlags: 0
@@ -1505,8 +1522,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68afcfff5f38147d88c8ad366580f405, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy.Spawn.EnemySpawnPoint
+  navMeshSampleDistance: 2
   showGizmo: 1
-  gizmoRadius: 0.5
   gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1001 &4834949860371495356
 PrefabInstance:
