@@ -100,6 +100,14 @@ namespace Player
             if (IsActionAllowed) meleeAttack.Tick();
         }
 
+        public void ResetState()
+        {
+            if (!IsReady) return;
+            if (IsAlive) return;
+
+            ChangeState(PlayerStateType.Alive);
+        }
+
         public void ReceiveDamage()
         {
             movement.ApplyHitStun();
@@ -132,6 +140,9 @@ namespace Player
                     Died?.Invoke();
                     break;
                 case PlayerStateType.Alive:
+                    health.ResetState();
+                    movement.ResetMotionState();
+                    animationHandler.Rebind();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(next), next, null);

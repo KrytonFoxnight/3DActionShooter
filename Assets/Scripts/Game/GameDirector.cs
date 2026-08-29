@@ -97,6 +97,14 @@ namespace Game
             ChangeState(WaveStateType.InProgress);
         }
 
+        public void ResetToIdle()
+        {
+            if (!_initialized) return;
+            if (_state == WaveStateType.Idle) return;
+
+            ChangeState(WaveStateType.Idle);
+        }
+
         private void Tick()
         {
             switch (_state)
@@ -133,6 +141,11 @@ namespace Game
             switch (next)
             {
                 case WaveStateType.Idle:
+                    StopSpawnRoutine();
+                    ClearSpawnedEnemies();
+                    _waveIndex = null;
+                    enemySpawner.ResetState();
+                    player.ResetState();
                     break;
                 case WaveStateType.InProgress:
                     _waveIndex = NextWaveIndex;
@@ -204,6 +217,16 @@ namespace Game
             StopCoroutine(_spawnRoutine);
 
             _spawnRoutine = null;
+        }
+
+        private void ClearSpawnedEnemies()
+        {
+            foreach (var enemy in _spawned)
+            {
+                if (enemy) Destroy(enemy.gameObject);
+            }
+
+            _spawned.Clear();
         }
 
         private void Dispose()

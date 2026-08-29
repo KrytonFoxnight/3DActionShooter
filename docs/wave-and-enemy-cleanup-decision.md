@@ -45,6 +45,7 @@ Idle ──▶ InProgress ──(전멸)──▶ Preparing ──▶ InProgress
             │ (플레이어 사망)              (배열 소진)
             ▼                                   ▼
           Failed                             Cleared
+            └───────────(ResetToIdle)───────────┴──▶ Idle
 ```
 
   플레이어 사망은 `InProgress`/`Preparing` 어느 상태에서든 `Failed`로 전이되도록 하여 처리함.
@@ -54,6 +55,8 @@ Idle ──▶ InProgress ──(전멸)──▶ Preparing ──▶ InProgress
 - **wave 데이터:** `GameDirector.initialEnemySpawn`을 `WaveDefinition[] waves`로 교체한다. 스폰 단위와 진행 소유는 5절 참고.
 - **로직 위치:** `GameDirector` 안에 둔다. 별도의 클래스로 분리할 필요성이 초기 단계인 지금 없기 때문. `Update()` 생명주기 메서드를 추가해서 여기서 판단하는 것으로 함.
 - **UI가 붙는다면** 재계산 결과가 바뀐 프레임에만 이벤트를 발행한다(`int` 비교로 엣지 검출). 판정과 표시가 같은 값을 읽으므로 이중 관리가 아니다.
+- **재시작:** `ResetToIdle()`로 `Idle` 상태로 초기화한다. 판·플레이어·스폰 지점 커서를 함께 되돌린다.
+  커서를 빼먹으면 저작한 웨이브의 배치가 시도마다 달라져 구성을 손으로 짠 의미가 없어진다.
 
 ## 5. 스폰 단위와 웨이브 진행의 소유
 

@@ -16,5 +16,11 @@ namespace Player.Animation
 
         public void SetFloat(PlayerAnimationStatus status, float value, float dampTime, float deltaTime) =>
             animator.SetFloat(status.GetAnimatorHash(), value, dampTime, deltaTime);
+
+        public void Rebind()
+        {
+            animator.Rebind();
+            animator.Update(0f);
+        }
     }
 }

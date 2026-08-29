@@ -34,6 +34,13 @@ namespace Enemy.Spawn
             IsInitialized = false;
         }
 
+        public void ResetState()
+        {
+            if (!IsInitialized) return;
+
+            _nextPointIndex = 0;
+        }
+
         public EnemyCharacter? Spawn(EnemySpawnRequest request)
         {
             if (!IsInitialized || !request.IsValid) return null;

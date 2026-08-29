@@ -11,5 +11,10 @@ namespace UI.DebugFeatureUI
         {
             gameDirector.StartWave();
         }
+
+        public void OnClickWaveResetButton()
+        {
+            gameDirector.ResetToIdle();
+        }
     }
 }
