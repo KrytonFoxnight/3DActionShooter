@@ -51,5 +51,12 @@ namespace Player
 
             _character.ReceiveDamage();
         }
+
+        public void ResetState()
+        {
+            if (!_initialized) return;
+
+            _health.ResetToFull();
+        }
     }
 }

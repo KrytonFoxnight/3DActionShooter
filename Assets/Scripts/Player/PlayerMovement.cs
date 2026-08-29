@@ -216,6 +216,15 @@ namespace Player
         // 짧은 지속시간이 이미 걸린 긴 지속시간을 덮어쓰지 않도록 Max로 갱신한다.
         public void ApplyHitStun() => _hitStunEndTime = Mathf.Max(_hitStunEndTime, Time.time + hitStunDuration);
 
+        public void ResetMotionState()
+        {
+            _dashEndTime = 0f;
+            _dashReadyTime = 0f;
+            _controlLockEndTime = 0f;
+            _hitStunEndTime = 0f;
+            _verticalVelocity = 0f;
+        }
+
         // 대시 진행 중 여부
         private bool IsDashing => Time.time < _dashEndTime;
 
