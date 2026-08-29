@@ -65,12 +65,14 @@ namespace Game
         {
             var spawnerInitResult = enemySpawner != null && enemySpawner.Init();
             var playerResult = player != null;
+            var waveResult = ValidateWaves();
 
-            if (!spawnerInitResult || !playerResult)
+            if (!spawnerInitResult || !playerResult || !waveResult)
             {
                 LogManager.LogError("GameDirector Init Failed\n" +
                                     $"enemySpawner: {spawnerInitResult}\n" +
-                                    $"player: {playerResult}", this);
+                                    $"player: {playerResult}\n" +
+                                    $"waves: {waveResult}", this);
 
                 return false;
             }
@@ -82,17 +84,31 @@ namespace Game
             return true;
         }
 
+        private bool ValidateWaves()
+        {
+            if (waves == null || waves.Length == 0)
+            {
+                LogManager.LogError("Wave Data Is Empty", this);
+
+                return false;
+            }
+
+            for (var i = 0; i < waves.Length; i++)
+            {
+                if (waves[i] != null && waves[i].IsValid) continue;
+
+                LogManager.LogError($"Invalid Wave Definition At Index {i}", this);
+
+                return false;
+            }
+
+            return true;
+        }
+
         public void StartWave()
         {
             if (!_initialized) return;
             if (_state != WaveStateType.Idle) return;
-
-            if (!HasNextWave)
-            {
-                LogManager.LogWarning("No Wave To Start", this);
-
-                return;
-            }
 
             ChangeState(WaveStateType.InProgress);
         }
@@ -172,21 +188,14 @@ namespace Game
 
         private IEnumerator SpawnWaveRoutine(WaveDefinition wave)
         {
-            if (wave != null && wave.IsValid)
-            {
-                var wait = spawnInterval > 0f ? new WaitForSeconds(spawnInterval) : null;
-                var spawns = wave.Spawns;
+            var wait = spawnInterval > 0f ? new WaitForSeconds(spawnInterval) : null;
+            var spawns = wave.Spawns;
 
-                foreach (var request in spawns)
-                {
-                    SpawnOne(request);
-
-                    yield return wait;
-                }
-            }
-            else
+            foreach (var request in spawns)
             {
-                LogManager.LogWarning($"Invalid Wave Definition At Wave {CurrentWaveNumber}", this);
+                SpawnOne(request);
+
+                yield return wait;
             }
 
             _spawnRoutine = null;
