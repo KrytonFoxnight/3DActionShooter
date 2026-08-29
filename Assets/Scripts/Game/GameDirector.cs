@@ -18,7 +18,7 @@ namespace Game
 
         [SerializeField] private Transform enemyTarget;
 
-        [SerializeField] private EnemySpawnRequest[] waves;
+        [SerializeField] private WaveDefinition[] waves;
 
         [SerializeField] private float spawnInterval = 0.25f;
 
@@ -157,37 +157,37 @@ namespace Game
             StateChanged?.Invoke(next);
         }
 
-        private IEnumerator SpawnWaveRoutine(EnemySpawnRequest request)
+        private IEnumerator SpawnWaveRoutine(WaveDefinition wave)
         {
-            if (request.IsValid)
+            if (wave != null && wave.IsValid)
             {
                 var wait = spawnInterval > 0f ? new WaitForSeconds(spawnInterval) : null;
+                var spawns = wave.Spawns;
 
-                for (var i = 0; i < request.Count; i++)
+                foreach (var request in spawns)
                 {
-                    SpawnOne(request.Enemy);
+                    SpawnOne(request);
 
                     yield return wait;
                 }
             }
             else
             {
-                LogManager.LogWarning($"Invalid Wave Request At Wave {CurrentWaveNumber}", this);
+                LogManager.LogWarning($"Invalid Wave Definition At Wave {CurrentWaveNumber}", this);
             }
 
             _spawnRoutine = null;
         }
 
-        private void SpawnOne(EnemyCharacter enemy)
+        private void SpawnOne(EnemySpawnRequest request)
         {
-            var spawned = enemySpawner.Spawn(new EnemySpawnRequest(enemy, 1));
+            var spawned = enemySpawner.Spawn(request);
 
-            for (var i = 0; i < spawned.Count; i++)
-            {
-                spawned[i].SetTarget(enemyTarget);
+            if (!spawned) return;
 
-                _spawned.Add(spawned[i]);
-            }
+            spawned.SetTarget(enemyTarget);
+
+            _spawned.Add(spawned);
         }
 
         private void OnPlayerDied()

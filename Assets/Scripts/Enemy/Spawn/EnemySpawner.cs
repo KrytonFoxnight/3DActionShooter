@@ -1,5 +1,4 @@
 #nullable enable
-using System.Collections.Generic;
 using Core;
 using UnityEngine;
 
@@ -35,30 +34,12 @@ namespace Enemy.Spawn
             IsInitialized = false;
         }
 
-        public IReadOnlyList<EnemyCharacter> Spawn(EnemySpawnRequest request)
+        public EnemyCharacter? Spawn(EnemySpawnRequest request)
         {
-            var spawned = new List<EnemyCharacter>();
+            if (!IsInitialized || !request.IsValid) return null;
+            if (!TryResolveSpawnPose(out var position, out var rotation)) return null;
 
-            if (!IsInitialized || !request.IsValid) return spawned;
-
-            var count = request.Count;
-            var pointCount = spawnPointProvider.Points.Count;
-
-            if (count > pointCount)
-            {
-                LogManager.LogWarning($"Spawn Count {count} Exceeds Spawn Point Count {pointCount}", this);
-
-                count = pointCount;
-            }
-
-            for (var i = 0; i < count; i++)
-            {
-                if (!TryResolveSpawnPose(out var position, out var rotation)) continue;
-
-                spawned.Add(Instantiate(request.Enemy, position, rotation));
-            }
-
-            return spawned;
+            return Instantiate(request.Enemy, position, rotation);
         }
 
         private bool TryResolveSpawnPose(out Vector3 position, out Quaternion rotation)
