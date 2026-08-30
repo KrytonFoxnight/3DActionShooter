@@ -71,7 +71,7 @@
 | `LogManager` 로그 중앙화 + asmdef 분리 | 완료 |
 
 > **범위가 계획을 넘었다.** 직전 버전의 이 문서는 웨이브를 동결 항목으로 두었으나 08-28~29에 구현했다.
-> 스포너와 전멸 감지가 끝난 뒤 남은 것이 상태 머신 하나뿐이었기 때문이다. 근거는 `docs/wave-and-enemy-cleanup-decision.md`.
+> 스포너와 전멸 감지가 끝난 뒤 남은 것이 상태 머신 하나뿐이었기 때문이다. 근거는 `docs/decisions/wave-and-enemy-cleanup.md`.
 > 이 때문에 코드 마감이 08-27에서 08-29로 밀렸다.
 
 > **제거한 것:** 학습 단계에서 쓰던 `TrainingDummy` 계층(스크립트 7종·프리팹·전용 에셋)을 08-30에 삭제했다.
@@ -169,38 +169,38 @@ EditMode asmdef 하나 + 케이스 6개면 닫힌다: 음수 / 0 / 현재 체력
 
 이 저장소의 **코드보다 중요한 산출물**이다. 채택/기각/근거/레퍼런스 구조를 유지한다.
 
-1. **플레이어 구조 결정: 순수 C# 중앙화 vs 기능 단위 컴포넌트 분리** (08-01) — `docs/component-architecture-decision.md`
+1. **플레이어 구조 결정: 순수 C# 중앙화 vs 기능 단위 컴포넌트 분리** (08-01) — `docs/decisions/component-architecture.md`
     - 채택: 방식 B(기능 단위 MonoBehaviour 분리 + 계산·규칙만 순수 C#)
     - 근거: 이 프로젝트는 엔진 기능이 코어, 실무 프로젝트는 시뮬레이션이 코어. 조건이 반대
     - 레퍼런스: Chop Chop, Boss Room 모두 전면 순수 C# 아님
 
-2. **공격 판정-애니메이션 타이밍 관리: 데이터 주도(hitDelay)** (08-02) — `docs/attack-timing-architecture-decision.md`
+2. **공격 판정-애니메이션 타이밍 관리: 데이터 주도(hitDelay)** (08-02) — `docs/decisions/attack-timing.md`
     - 채택: `AttackConfig` SO의 `hitDelay` + 코루틴 타이머 / 기각: Animation Event 주도
     - 근거: 서버 권위 구조 이식성, 1인 개발에서 Animation Event의 장점 무의미, 판정/표현 분리
     - 레퍼런스: Boss Room `ActionConfig.cs` / `MeleeAction.cs`
 
-3. **유닛 상태 관리 권한: 분산 소유 vs 권한자 컴포넌트** (08-26) — `docs/unit-state-authority-decision.md`
+3. **유닛 상태 관리 권한: 분산 소유 vs 권한자 컴포넌트** (08-26) — `docs/decisions/unit-state-authority.md`
     - 채택: 유닛마다 상태 소유·변경 권한을 독점하는 컴포넌트 (`PlayerCharacter` / `EnemyCharacter`)
     - 근거: 상태 필드 직접 대입 지점이 흩어져 있어 상태 하나 추가에 소비처 N곳을 고쳐야 함
     - 레퍼런스: Boss Room `ServerCharacter.cs` / Chop Chop `Protagonist.cs`
     - 방식 A 회귀가 아님: 중앙화 대상이 **로직**이 아니라 **상태 소유권**
 
-4. **적 스폰 구조 결정** (08-27) — `docs/enemy-spawn-responsibility-decision.md`
+4. **적 스폰 구조 결정** (08-27) — `docs/decisions/enemy-spawn.md`
     - 채택: 스폰 지점(`EnemySpawnPointProvider`) / 생성(`EnemySpawner`) / 요청 DTO(`EnemySpawnRequest`) / 지휘(`GameDirector`) 분리
     - 설계 훅 3번(스폰은 단일 창구를 거친다)의 실현
 
-5. **캐릭터 종속 UI: 스크린스페이스 투영 vs 월드스페이스 Canvas** (08-27) — `docs/world-space-ui-decision.md`
+5. **캐릭터 종속 UI: 스크린스페이스 투영 vs 월드스페이스 Canvas** (08-27) — `docs/decisions/world-space-ui.md`
     - 채택: 씬 공용 스크린스페이스 Canvas + `WorldToScreenPoint` 투영
-    - **계획을 뒤집은 결정이다.** `finalize-todo.md`는 월드스페이스를 지시했다
+    - **계획을 뒤집은 결정이다.** `docs/progress-log.md`는 월드스페이스를 지시했다
 
-6. **웨이브 진행과 사망 적 정리 구조** (08-28) — `docs/wave-and-enemy-cleanup-decision.md`
+6. **웨이브 진행과 사망 적 정리 구조** (08-28) — `docs/decisions/wave-and-enemy-cleanup.md`
     - 채택: 파괴는 적 자신이 지연 예약 / 전멸 판정은 `GameDirector`가 목록 재계산
     - 기각: 적의 `Died` 이벤트를 전멸 판정 근거로 사용
 
 ### 미작성
 
 - **카메라를 Cinemachine 없이 직접 구현한 이유** — 가장 먼저 물어볼 지점이다. 결정은 있으나 결정 문서가 없다.
-  `docs/unity-camera-system-guide.md`는 외부 세션 정리 노트이지 이 저장소의 결정 기록이 아니다.
+  `docs/notes/unity-camera-system.md`는 외부 세션 정리 노트이지 이 저장소의 결정 기록이 아니다.
 - **적 추적 정지 거리 진동 문제** — 진동이 실제로 발생하지 않아 작성하지 않는다.
   대신 `EnemyAI.cs:15,107`의 히스테리시스로 상태 경계 떨림을 막았다는 사실이 README의 설명 대상이다.
 
@@ -302,18 +302,27 @@ main ← dev ← feature/*
 
 ## 13. 관련 문서의 유효성
 
+문서는 용도로 나눈다. **새 설계 결정은 `docs/decisions/`에 짧은 이름으로 만든다** — 폴더가 이미 "결정"을 뜻하므로 `-decision` 접미사를 붙이지 않는다.
+
+```text
+docs/decisions/   설계 결정. 채택/기각/근거/레퍼런스 구조
+docs/notes/       조사·운영 메모. 판단 근거로 쓰지 않는다
+docs/media/       README용 GIF·스크린샷
+docs/progress-log.md   진행 로그
+```
+
 | 문서 | 상태 |
 |---|---|
 | **CLAUDE.md (이 문서)** | **현행. 범위·일정·원칙의 유일한 기준** |
-| `docs/component-architecture-decision.md` | 현행. 설계 결정 ① |
-| `docs/attack-timing-architecture-decision.md` | 현행. 설계 결정 ② |
-| `docs/unit-state-authority-decision.md` | 현행. 설계 결정 ③ (08-30 이름 이력 주석 추가) |
-| `docs/enemy-spawn-responsibility-decision.md` | 현행. 설계 결정 ④ |
-| `docs/world-space-ui-decision.md` | 현행. 설계 결정 ⑤ |
-| `docs/wave-and-enemy-cleanup-decision.md` | 현행. 설계 결정 ⑥ |
-| `docs/unity-camera-system-guide.md` | 현행. 단 외부 세션(NDC) 정리 노트이며 이 저장소의 구현 결정 문서가 아니다 |
-| `docs/finalize-todo.md` | **진행 로그로 종료.** 계획 문서로 쓰지 않는다 |
-| `docs/idea.md` / `docs/asset-repo-management.md` / `docs/unity-addressables-submodule-notes.md` | 보조 메모. 판단 근거로 쓰지 않는다 |
+| `docs/decisions/component-architecture.md` | 현행. 설계 결정 ① |
+| `docs/decisions/attack-timing.md` | 현행. 설계 결정 ② |
+| `docs/decisions/unit-state-authority.md` | 현행. 설계 결정 ③ (08-30 이름 이력 주석 추가) |
+| `docs/decisions/enemy-spawn.md` | 현행. 설계 결정 ④ |
+| `docs/decisions/world-space-ui.md` | 현행. 설계 결정 ⑤ |
+| `docs/decisions/wave-and-enemy-cleanup.md` | 현행. 설계 결정 ⑥ |
+| `docs/notes/unity-camera-system.md` | 현행. 단 외부 세션(NDC) 정리 노트이며 이 저장소의 구현 결정 문서가 아니다 |
+| `docs/progress-log.md` | **진행 로그로 종료.** 계획 문서로 쓰지 않는다 |
+| `docs/notes/idea-backlog.md` / `docs/notes/asset-repo-management.md` | 보조 메모. 판단 근거로 쓰지 않는다 |
 | 외부 개인 노트 | **저장소에 없다.** 이 저장소의 기준이 아니다 |
 
 **충돌 시 이 문서를 따른다.**

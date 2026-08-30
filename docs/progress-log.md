@@ -14,16 +14,16 @@
 > | 1. 적 추적 (NavMesh) | 유일한 코어 | **완료.** `EnemyMovement.cs`, `EnemyAI.cs` |
 > | 2. 상태 전환 | Idle/Chase/Attack/Dead 4상태 | **완료. 단 3상태** — 생사는 `EnemyCharacter`가 따로 소유 (`EnemyAIStateType.cs`) |
 > | 3. 스포너 | 45분 | **완료.** `EnemySpawner` / `EnemySpawnPoint` / `EnemySpawnPointProvider` / `EnemySpawnRequest` |
-> | 4. 체력바 | 월드스페이스 Canvas | **완료. 단 방식 역전** — 스크린스페이스 투영 채택 (`docs/world-space-ui-decision.md`) |
+> | 4. 체력바 | 월드스페이스 Canvas | **완료. 단 방식 역전** — 스크린스페이스 투영 채택 (`docs/decisions/world-space-ui.md`) |
 > | 5. 전멸 감지 → 재스폰 | "코드 샘플용" | **완료. 그 이상으로 감** — 웨이브 진행 시스템으로 구현 (`GameDirector.cs`, `WaveDefinition.cs`) |
 > | 6. 킬카운트 Text | 시간 남으면 | **안 함.** 새 증거 0이라는 판단 유지 |
 >
 > ### 계획과 갈린 지점 3개 (기록용)
 >
 > 1. **체력바 방식이 뒤집혔습니다.** 이 문서는 "Screen Space 캔버스로 하지 말 것"이라고 경고했지만, 실제로는 스크린스페이스 투영을 채택했습니다.
->    적이 여럿일 때 캔버스가 유닛 수만큼 생기는 쪽이 더 비싸다고 판단했습니다. 근거는 `docs/world-space-ui-decision.md`.
+>    적이 여럿일 때 캔버스가 유닛 수만큼 생기는 쪽이 더 비싸다고 판단했습니다. 근거는 `docs/decisions/world-space-ui.md`.
 > 2. **웨이브를 구현했습니다.** 계획상 5번은 "GIF에 안 보이는 코드 샘플용"이었고 `CLAUDE.md`에서는 아예 동결 항목이었습니다.
->    스포너·전멸 감지가 끝나고 나니 남은 것이 상태 머신 하나뿐이어서 진행했습니다. 근거는 `docs/wave-and-enemy-cleanup-decision.md`.
+>    스포너·전멸 감지가 끝나고 나니 남은 것이 상태 머신 하나뿐이어서 진행했습니다. 근거는 `docs/decisions/wave-and-enemy-cleanup.md`.
 > 3. **코드 마감이 08-27에서 08-29로 밀렸습니다.** 위 2번이 원인입니다.
 >
 > ### 안 한 것 (판단에 따른 제외)

@@ -13,7 +13,7 @@
 
 - **위치.** `Character.cs` 계열 스크립트에서 상태 전이 관리를 해주고 있었으므로 해당 위치에 정리 코드를 추가한다. `ChangeState`의 재진입 가드(`:129`)가 중복 예약을 막아주므로 별도 플래그가 필요 없다.
 - **`delay`를 둔 이유.** 캐릭터의 사망 연출을 보여주기 위한 조치. `hideDelayOnDeath = 2f`(`EnemyHpBarPresenter.cs:19`)보다 커야 한다 — 더 작으면 체력바가 그 값이 아니라 파괴 시점에 사라져 설정 자체가 무의미해진다.
-- **굳이 파괴 완료까지 기다리지 않는 이유.** 연출을 위한 처리가 게임 로직의 진행을 막고 있으면 안 되기 때문. `hitImpactDelay`로 판정과 표현을 분리한 결정(`attack-timing-architecture-decision.md`)과 같은 원칙이다.
+- **굳이 파괴 완료까지 기다리지 않는 이유.** 연출을 위한 처리가 게임 로직의 진행을 막고 있으면 안 되기 때문. `hitImpactDelay`로 판정과 표현을 분리한 결정([공격 판정 타이밍](./attack-timing.md))과 같은 원칙이다.
 
 레퍼런스도 유닛 자신이 파괴한다. Boss Room `ServerCharacter.cs:341`(3초 지연 후 Despawn), Chop Chop `DestroyEntitySO.OnStateEnter()`. 플레이어는 파괴하지 않는다.
 
