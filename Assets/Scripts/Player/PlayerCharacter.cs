@@ -3,6 +3,7 @@ using Core;
 using Player.Animation;
 using Player.State;
 using UI.HealthBarUI.PlayerUI.NearestEnemyHpBar;
+using UI.HudUI;
 using UnityEngine;
 
 namespace Player
@@ -16,6 +17,7 @@ namespace Player
         [SerializeField] private NearestEnemyScanner nearestEnemyScanner;
 
         [SerializeField] private NearestEnemyHpBarPresenter nearestEnemyHpBarPresenter;
+        [SerializeField] private HudPresenter hudPresenter;
 
         [SerializeField] private float hitReactionCooldown = 1.2f;
 
@@ -67,9 +69,11 @@ namespace Player
 
             var nearestEnemyDetectorResult = nearestEnemyScanner != null && nearestEnemyScanner.Init();
             var nearestEnemyHpBarResult = nearestEnemyHpBarPresenter != null && nearestEnemyHpBarPresenter.Init();
+            var hudBindResult = healthInitResult && hudPresenter != null;
+            if (hudBindResult) hudPresenter.BindPlayerHealth(health.Model);
 
             var result = animationHandlerResult && healthInitResult && movementInitResult && meleeAttackInitResult &&
-                         nearestEnemyDetectorResult && nearestEnemyHpBarResult;
+                         nearestEnemyDetectorResult && nearestEnemyHpBarResult && hudBindResult;
 
             if (!result)
             {
@@ -79,7 +83,8 @@ namespace Player
                                     $"movement: {movementInitResult}\n" +
                                     $"meleeAttack: {meleeAttackInitResult}\n" +
                                     $"nearestEnemyScanner: {nearestEnemyDetectorResult}\n" +
-                                    $"nearestEnemyHpBarPresenter: {nearestEnemyHpBarResult}", this);
+                                    $"nearestEnemyHpBarPresenter: {nearestEnemyHpBarResult}\n" +
+                                    $"hudPresenter: {hudBindResult}", this);
             }
 
             return result;
@@ -153,6 +158,7 @@ namespace Player
         {
             if (nearestEnemyScanner != null && nearestEnemyScanner.IsInitialized) nearestEnemyScanner.Dispose();
             if (nearestEnemyHpBarPresenter != null && nearestEnemyHpBarPresenter.IsInitialized) nearestEnemyHpBarPresenter.Dispose();
+            if (hudPresenter != null) hudPresenter.UnbindPlayerHealth();
             if (meleeAttack != null && meleeAttack.IsInitialized) meleeAttack.Dispose();
             if (movement != null && movement.IsInitialized) movement.Dispose();
             if (health != null && health.IsInitialized) health.Dispose();
