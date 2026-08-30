@@ -325,7 +325,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 664056238}
-        m_TargetAssemblyTypeName: UI.DebugFeatureUI.DebugFeatureView, ActionShooter.Runtime
+        m_TargetAssemblyTypeName: UI.DebugFeatureUI.DebugFeatureView, ArenaCombat.Runtime
         m_MethodName: OnClickWaveStartButton
         m_Mode: 1
         m_Arguments:
@@ -458,7 +458,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 664056238}
-        m_TargetAssemblyTypeName: UI.DebugFeatureUI.DebugFeatureView, ActionShooter.Runtime
+        m_TargetAssemblyTypeName: UI.DebugFeatureUI.DebugFeatureView, ArenaCombat.Runtime
         m_MethodName: OnClickWaveResetButton
         m_Mode: 1
         m_Arguments:
@@ -1097,7 +1097,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ca5c0487178540f6a7d2a0cb8f6847a0, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: ActionShooter.Runtime::UI.DebugFeatureUI.DebugFeatureView
+  m_EditorClassIdentifier: ArenaCombat.Runtime::UI.DebugFeatureUI.DebugFeatureView
   gameDirector: {fileID: 1671665311}
 --- !u!1 &665472726
 GameObject:
