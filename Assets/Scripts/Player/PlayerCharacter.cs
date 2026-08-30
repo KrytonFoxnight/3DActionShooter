@@ -113,6 +113,15 @@ namespace Player
             ChangeState(PlayerStateType.Alive);
         }
 
+        public void SetInvincible(bool value)
+        {
+            if (invincible == value) return;
+
+            invincible = value;
+
+            LogManager.Log($"Player Invincible: {invincible}", this);
+        }
+
         public void ReceiveDamage()
         {
             movement.ApplyHitStun();
