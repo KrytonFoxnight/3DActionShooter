@@ -104,6 +104,13 @@ namespace Enemy
             if (IsActionAllowed) ai.Tick();
         }
 
+        public void SetDisplayName(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return;
+
+            displayName = value;
+        }
+
         public void SetTarget(Transform target)
         {
             if (ai == null) return;

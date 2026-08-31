@@ -46,7 +46,11 @@ namespace Enemy.Spawn
             if (!IsInitialized || !request.IsValid) return null;
             if (!TryResolveSpawnPose(out var position, out var rotation)) return null;
 
-            return Instantiate(request.Enemy, position, rotation);
+            var spawned = Instantiate(request.Enemy, position, rotation);
+
+            spawned.SetDisplayName(request.DisplayName);
+
+            return spawned;
         }
 
         private bool TryResolveSpawnPose(out Vector3 position, out Quaternion rotation)
