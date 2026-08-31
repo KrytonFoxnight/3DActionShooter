@@ -51,6 +51,7 @@ namespace UI.HudUI
 
             _initialized = true;
 
+            TryBindPlayerHealth();
             OnStateChanged(_director.CurrentState);
 
             return true;
@@ -70,7 +71,15 @@ namespace UI.HudUI
 
         #region Player
 
-        public void BindPlayerHealth(Health health)
+        private void TryBindPlayerHealth()
+        {
+            var player = _director.Player;
+            var health = player ? player.HealthModel : null;
+
+            BindPlayerHealth(health);
+        }
+
+        private void BindPlayerHealth(Health health)
         {
             if (ReferenceEquals(_playerHealth, health)) return;
 
@@ -87,7 +96,7 @@ namespace UI.HudUI
             RefreshPlayerHp();
         }
 
-        public void UnbindPlayerHealth()
+        private void UnbindPlayerHealth()
         {
             if (_playerHealth == null) return;
 
@@ -111,6 +120,7 @@ namespace UI.HudUI
         {
             if (!_initialized) return;
 
+            TryBindPlayerHealth();
             RefreshWaveInfo(false);
         }
 

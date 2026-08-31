@@ -45,6 +45,8 @@ namespace Game
 
         public int TotalWaveCount => waves?.Length ?? 0;
 
+        public PlayerCharacter Player => player;
+
         private bool IsSpawning => _spawnRoutine != null;
 
         private int NextWaveIndex => _waveIndex + 1 ?? 0;
