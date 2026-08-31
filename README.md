@@ -66,7 +66,7 @@
 | 좌클릭 | 근접 공격                         |
 | `LShift` | 구르기                           |
 | `Space` | 점프                            |
-| 화면 버튼 | Wave Start / Reset            |
+| 화면 버튼 | Wave Start / Reset / 무적 토글(개발용)  |
 
 ---
 
@@ -75,14 +75,14 @@
 | 영역 | 내용                                                                  |
 |---|---------------------------------------------------------------------|
 | 이동 | 카메라 상대 이동, 걷기/달리기 전환, 구르기, 점프 (`CharacterController`)               |
-| 카메라 | 3인칭 궤도 카메라 **직접 구현** (Cinemachine 미사용)                              |
+| 카메라 | 3인칭 궤도 카메라 **직접 구현** (Cinemachine 미사용), 피격 시 흔들림                    |
 | 전투 | 근접 공격, `AttackConfig`(SO) 기반 판정, 구체 영역 판정                           |
 | 판정 타이밍 | `hitImpactDelay`로 **애니메이션 시작 프레임과 데미지 반영 시점을 분리**                   |
 | 피격·사망 | 순수 C# `Health` + `IDamageable`, 피격 경직, 사망 상태 전이                     |
 | 적 AI | NavMesh 기반의 플레이어 추적, `enum` + `switch` 상태 전환 (Idle / Chase / Attack) |
 | 스폰 | 스폰 지점 · 생성기 · 스폰 요청 DTO 분리                                          |
 | 웨이브 | 진행 상태 머신 (Idle / InProgress / Preparing / Cleared / Failed)         |
-| UI | 적 체력바 (스크린스페이스 투영 방식)                                               |
+| UI | 적 체력바 · 플레이어 체력 · 웨이브 정보 · 결과 표시 (스크린스페이스)                      |
 
 ---
 
@@ -95,7 +95,7 @@ Assets/Scripts/
 ├─ Combat/     Health · IDamageable · AttackConfig
 ├─ Cameras/    3인칭 카메라
 ├─ Game/       GameDirector · 웨이브 정의
-├─ UI/         체력바
+├─ UI/         체력바 · HUD
 └─ Core/       LogManager · AgentDoc
 
 docs/
@@ -125,7 +125,10 @@ CLAUDE.md      AI 작업 규칙
 | 순수 C# 규칙층 | [`Health.cs`](Assets/Scripts/Combat/Health.cs) | MonoBehaviour 비의존. 체력 규칙만 담당 |
 | 웨이브 상태 머신 | [`GameDirector.cs:151`](Assets/Scripts/Game/GameDirector.cs#L151) | 전이 시 부작용을 `ChangeState` 안에 모음 |
 | 구도와 적용의 분리 | [`CameraRigProperty.cs`](Assets/Scripts/Cameras/CameraRigProperty.cs) | 카메라를 Transform이 아니라 **파라미터(yaw · pitch · distance · pivot)로** 들고 있다가 마지막에 한 번 변환. 외부 효과를 합성할 자리를 남겨둔 구조 |
-| 카메라 갱신 시점 | [`CameraFollow.cs:32`](Assets/Scripts/Cameras/CameraFollow.cs#L32) | `LateUpdate` 사용. 같은 `Update` 안에서는 실행 순서가 보장되지 않기 때문 |
+| 카메라 갱신 시점 | [`CameraFollow.cs:33`](Assets/Scripts/Cameras/CameraFollow.cs#L33) | `LateUpdate` 사용. 같은 `Update` 안에서는 실행 순서가 보장되지 않기 때문 |
+| 카메라 효과 합성 | [`CameraFollow.cs:75`](Assets/Scripts/Cameras/CameraFollow.cs#L75) | 흔들림은 회전이 아니라 **위치에만** 더함. 회전에 섞으면 조준 방향이 어긋남 |
+| 효과 계산의 분리 | [`CameraShake.cs:46`](Assets/Scripts/Cameras/CameraShake.cs#L46) | 자체 `Update`를 갖지 않고 오프셋만 반환. 구동 시점을 `CameraFollow` 한쪽으로 모아 프레임 어긋남을 없앰 |
+| HUD 의존성 방향 | [`HudPresenter.cs:74`](Assets/Scripts/UI/HudUI/HudPresenter.cs#L74) | 플레이어가 UI로 밀어넣지 않고 HUD가 필요할 때 조회. 초기화 진입점은 `GameDirector` 하나 |
 
 ---
 
@@ -149,15 +152,14 @@ CLAUDE.md      AI 작업 규칙
 
 추후 구현 및 정리할 목록입니다. 당장 하지 않은 이유가 있는 항목은 함께 적었습니다.
 
-- [ ] **피격 무적 시간(i-frame)** — 현재 `PlayerCharacter.cs:23`의 `invincible`은 디버그 플래그일 뿐입니다
+- [ ] **피격 무적 시간(i-frame)** — 현재 `PlayerCharacter.cs:24`의 `invincible`은 디버그 플래그일 뿐입니다. 화면 버튼으로 켤 수 있으나, 데미지 진입 자체를 막는 개발용 스위치이지 무적 시간 규칙이 아닙니다
 - [ ] **`Health` 유닛 테스트** — 순수 C#으로 분리한 이유가 테스트 가능성인데 아직 없습니다
 - [ ] **카메라 설계 결정 문서** — Cinemachine을 쓰지 않은 판단은 있으나 문서로 남기지 않았습니다
-- [ ] **카메라 Modifier 계층** — 지금은 `CameraFollow` 하나가 구도를 직접 만듭니다.
+- [ ] **카메라 Modifier 계층** — 지금은 `CameraFollow`가 `CameraShake` 하나를 직접 합산합니다.
       회전 · 충돌 회피 · 흔들림을 상태 없는 Modifier로 떼어내면 `CameraRigProperty` 단계에서 합성할 수 있습니다 ([참고](docs/notes/unity-camera-system.md))
-- [ ] **플레이어 정보 UI** — 현재 화면에 나오는 체력은 적 것뿐이고, 플레이어 자신의 상태는 표시되지 않습니다
 - [ ] **체력 표현 UX 개선** — 거리에 따른 적 UI 비활성화 등. 지금은 `scanRange`(기본 8m) 안의 최근접 적 하나만 표시합니다
-- [ ] **카메라 연출** — 게임 시작 · 피격 · 게임 종료 시점의 연출. 현재 카메라는 추적만 합니다
-- [ ] **결과 화면** — 웨이브 `Cleared` / `Failed` 상태는 이미 있습니다
+- [ ] **카메라 연출** — 피격 흔들림만 있습니다. 게임 시작 · 종료 시점의 연출은 없습니다
+- [ ] **결과 화면** — 웨이브 `Cleared` / `Failed`는 HUD 배너 한 줄로만 표시합니다. 전용 결과 화면은 없습니다
 - [ ] **부채꼴 각도 판정** — 현재는 구체 영역 판정만 있습니다
 - [ ] **보상 선택 / 스탯 강화**
 - [ ] **원거리 무기 · 스킬 · 락온**
