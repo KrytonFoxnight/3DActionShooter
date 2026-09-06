@@ -12,11 +12,12 @@ namespace Cameras
         // 외부 연결 컴포넌트들
         [SerializeField] private Transform targetTransform;             // 목표 transform
         [SerializeField] private PlayerInputReader playerInputReader;   // 플레이어 입력 (시점 관련 처리용)
+        [SerializeField] private CameraShake cameraShake;
 
         // 파라미터들
-        [SerializeField] private float distance = 2f;                   // 카메라의 pivot으로부터의 거리
+        [SerializeField] private float distance = 3f;                   // 카메라의 pivot으로부터의 거리
         [SerializeField] private float pivotHeight = 1.5f;              // 카메라 궤도의 중심 높이
-        [SerializeField] private float sensitivity = 0.15f;             // 화면 이동에 따른 회전 각도 전환 배율값
+        [SerializeField] private float sensitivity = 0.25f;             // 화면 이동에 따른 회전 각도 전환 배율값
         [SerializeField] private float pitchMin = -30f;                 // pitch 최소값 (상하 회전)
         [SerializeField] private float pitchMax = 60f;                  // pitch 최대값
 
@@ -70,6 +71,8 @@ namespace Cameras
 
             // pivot을 바라보는 방향의 반대로 distance만큼 떨어진 방향으로 position 설정
             var position = pivot - rotation * Vector3.forward * rig.Distance;
+
+            if (cameraShake) position += rotation * cameraShake.Evaluate(Time.deltaTime);
 
             // 카메라의 transform 으로 최종 적용
             _camera.transform.SetPositionAndRotation(position, rotation);
