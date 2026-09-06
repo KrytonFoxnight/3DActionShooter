@@ -62,9 +62,9 @@ git status   # m 이 사라졌으면 종료
 ## 5. 새 워크트리(wtN) 생성 시
 
 ```powershell
-git worktree add E:\Unity\3DActionShooter-wtN <브랜치>
-cd E:\Unity\3DActionShooter-wtN
-git submodule update --init --reference E:\Unity\3DActionShooter\Assets\ThirdParty
+git worktree add <본진 경로>-wtN <브랜치>
+cd <본진 경로>-wtN
+git submodule update --init --reference <본진 경로>/Assets/ThirdParty
 ```
 
 - `git worktree add`는 서브모듈을 자동 클론하지 않는다. 첫 init은 워크트리당 1회 수동 필수.
