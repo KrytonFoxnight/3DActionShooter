@@ -319,7 +319,7 @@ main ← dev ← feature/*
 - `Assets/ThirdParty` 서브모듈은 워크트리마다 별도 클론이 정상이다. junction/폴더 공유 금지 — 진실은 각 브랜치의 포인터이고, 체크아웃은 파생물이다.
 - 브랜치 전환/pull/push 시 서브모듈은 자동 동기화된다 (`submodule.recurse`, `push.recurseSubmodules on-demand`).
 - 에셋 수정은 한 체크아웃에서만 한다. 나머지 워크트리에서 ThirdParty는 읽기 전용이며, 전파는 서브모듈 push → 부모 `chore` 커밋(포인터 갱신)으로만 한다.
-- 새 워크트리 생성 시 1회 필수: `git submodule update --init --reference E:\Unity\3DActionShooter\Assets\ThirdParty`
+- 새 워크트리 생성 시 1회 필수: `git submodule update --init --reference <본진 경로>/Assets/ThirdParty`
 
 ## 12. AgentDoc 규칙
 
