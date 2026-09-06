@@ -4149,7 +4149,9 @@ MonoBehaviour:
   meleeAttack: {fileID: 7965625255088148218}
   nearestEnemyScanner: {fileID: 4676506921555866841}
   nearestEnemyHpBarPresenter: {fileID: 7082830720262589830}
+  hudPresenter: {fileID: 0}
   hitReactionCooldown: 1.2
+  invincible: 0
 --- !u!114 &1013046420389809324
 MonoBehaviour:
   m_ObjectHideFlags: 0

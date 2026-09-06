@@ -1,6 +1,7 @@
 using System;
 using Core;
 using Player.Animation;
+using Combat;
 using Player.State;
 using UI.HealthBarUI.PlayerUI.NearestEnemyHpBar;
 using UnityEngine;
@@ -32,6 +33,8 @@ namespace Player
         public bool IsAlive => _state == PlayerStateType.Alive;
 
         public bool IsInvincible => invincible;
+
+        public Health HealthModel => health != null && health.IsInitialized ? health.Model : null;
 
         private bool IsActionAllowed => IsAlive && !movement.IsInHitStun && !movement.IsControlLocked;
 
@@ -106,6 +109,15 @@ namespace Player
             if (IsAlive) return;
 
             ChangeState(PlayerStateType.Alive);
+        }
+
+        public void SetInvincible(bool value)
+        {
+            if (invincible == value) return;
+
+            invincible = value;
+
+            LogManager.Log($"Player Invincible: {invincible}", this);
         }
 
         public void ReceiveDamage()

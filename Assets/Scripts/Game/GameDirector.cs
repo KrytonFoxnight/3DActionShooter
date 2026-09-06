@@ -6,6 +6,7 @@ using Enemy;
 using Enemy.Spawn;
 using Game.State;
 using Player;
+using UI.HudUI;
 using UnityEngine;
 
 namespace Game
@@ -19,6 +20,8 @@ namespace Game
         [SerializeField] private Transform enemyTarget;
 
         [SerializeField] private WaveDefinition[] waves;
+
+        [SerializeField] private HudPresenter hudPresenter;
 
         [SerializeField] private float spawnInterval = 0.25f;
 
@@ -39,6 +42,10 @@ namespace Game
         public int? CurrentWaveNumber => _waveIndex + 1;
 
         public int AliveEnemyCount => _spawned.Count;
+
+        public int TotalWaveCount => waves?.Length ?? 0;
+
+        public PlayerCharacter Player => player;
 
         private bool IsSpawning => _spawnRoutine != null;
 
@@ -66,13 +73,15 @@ namespace Game
             var spawnerInitResult = enemySpawner != null && enemySpawner.Init();
             var playerResult = player != null;
             var waveResult = ValidateWaves();
+            var hudResult = hudPresenter != null && hudPresenter.Init(this);
 
-            if (!spawnerInitResult || !playerResult || !waveResult)
+            if (!spawnerInitResult || !playerResult || !waveResult || !hudResult)
             {
                 LogManager.LogError("GameDirector Init Failed\n" +
                                     $"enemySpawner: {spawnerInitResult}\n" +
                                     $"player: {playerResult}\n" +
-                                    $"waves: {waveResult}", this);
+                                    $"waves: {waveResult}\n" +
+                                    $"hudPresenter: {hudResult}", this);
 
                 return false;
             }
@@ -146,6 +155,8 @@ namespace Game
                 default:
                     throw new ArgumentOutOfRangeException(nameof(_state), _state, null);
             }
+
+            hudPresenter.Tick();
         }
 
         private void ChangeState(WaveStateType next)
@@ -245,6 +256,8 @@ namespace Game
             if (player != null) player.Died -= OnPlayerDied;
 
             if (enemySpawner != null && enemySpawner.IsInitialized) enemySpawner.Dispose();
+
+            if (hudPresenter != null && hudPresenter.IsInitialized) hudPresenter.Dispose();
 
             _spawned.Clear();
 
